@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Scenario library</h1>
+{% for s in scenarios %}
+  <section class="card">
+    <h2>{{ s.title }}</h2>
+    <p>{{ s.summary }}</p>
+    <p class="meta">
+      Module: {{ s.module }} ({{ s.attack_tactic }}) ·
+      Built against ATT&amp;CK for ICS {{ s.framework_versions.attack_ics }}
+      and NIST SP 800-82 {{ s.framework_versions.nist_sp800_82 }}
+    </p>
+    <a class="button" href="{{ url_for('start', scenario_id=s.id) }}">Start exercise</a>
+  </section>
+{% endfor %}
+{% endblock %}

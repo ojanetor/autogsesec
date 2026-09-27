@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="meta">{{ scenario.title }} · Decision {{ number }} of {{ total }}</p>
+<section class="card">
+  <p class="context">{{ point.context }}</p>
+  <h2>{{ point.prompt }}</h2>
+  {% if error %}<p class="error">{{ error }}</p>{% endif %}
+  <form method="post">
+    {% for option in point.options %}
+      <label class="option">
+        <input type="radio" name="option_id" value="{{ option.id }}" required>
+        <span>{{ option.text }}</span>
+      </label>
+    {% endfor %}
+    <button class="button" type="submit">Submit decision</button>
+  </form>
+</section>
+{% endblock %}

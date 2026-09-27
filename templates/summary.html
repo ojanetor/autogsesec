@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Session summary</h1>
+<p class="meta">{{ scenario.title }}</p>
+<p>Your decisions were captured. Scoring and the full after-action report come in a later build phase.</p>
+{% for row in rows %}
+  <section class="card">
+    <h2>{{ row.prompt }}</h2>
+    <p><strong>Your decision:</strong> {{ row.choice }}</p>
+    <p class="meta">Mapped NIST controls: {{ row.controls | join(", ") }}</p>
+  </section>
+{% endfor %}
+<a class="button" href="{{ url_for('home') }}">Back to scenario library</a>
+{% endblock %}

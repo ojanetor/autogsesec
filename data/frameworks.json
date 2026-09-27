@@ -1,0 +1,24 @@
+{
+  "attack_ics": {
+    "name": "MITRE ATT&CK for ICS",
+    "version": "v19.2",
+    "tactics": {
+      "TA0108": "Initial Access",
+      "TA0101": "Command and Control",
+      "TA0106": "Impair Process Control",
+      "TA0105": "Impact"
+    }
+  },
+  "nist_sp800_82": {
+    "name": "NIST SP 800-82 Rev. 3 (OT overlay of SP 800-53 Rev. 5 controls)",
+    "version": "Rev. 3",
+    "controls": {
+      "AT-2": "Literacy Training and Awareness",
+      "CP-10": "System Recovery and Reconstitution",
+      "IR-4": "Incident Handling",
+      "IR-6": "Incident Reporting",
+      "IR-8": "Incident Response Plan",
+      "SI-4": "System Monitoring"
+    }
+  }
+}

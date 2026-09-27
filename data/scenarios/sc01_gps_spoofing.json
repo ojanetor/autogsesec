@@ -1,0 +1,42 @@
+{
+  "id": "sc01",
+  "title": "Drifting Positions: GPS Spoofing on the Ramp",
+  "module": "Command and Control",
+  "status": "DRAFT - replace with thesis scenario content",
+  "summary": "Autonomous baggage tractors begin reporting positions that do not match what ramp staff can see.",
+  "decision_points": [
+    {
+      "id": "dp1",
+      "context": "During the early morning departure bank, the fleet dashboard shows one autonomous baggage tractor about 15 meters from where the ramp agent can see it. The vehicle is still moving and its route planner is adjusting to the reported position.",
+      "prompt": "What is your first action?",
+      "options": [
+        {"id": "a", "text": "Treat it as a sensor glitch and let the tractor finish its run."},
+        {"id": "b", "text": "Command a safe stop and tell the operations supervisor."},
+        {"id": "c", "text": "Command a safe stop and restart the navigation system right away."},
+        {"id": "d", "text": "Command a safe stop, tell the supervisor, and preserve the logs."}
+      ]
+    },
+    {
+      "id": "dp2",
+      "context": "Within ten minutes two more tractors in the same area show the same drift. Vehicles on the far side of the ramp look normal.",
+      "prompt": "Who needs to know, and how?",
+      "options": [
+        {"id": "a", "text": "Keep it within the ramp team to avoid alarming anyone."},
+        {"id": "b", "text": "Report to the security team and airport operations through the incident process."},
+        {"id": "c", "text": "Contact only the vehicle vendor's support line."},
+        {"id": "d", "text": "Post a heads-up in the shift group chat."}
+      ]
+    },
+    {
+      "id": "dp3",
+      "context": "After forty minutes the reported positions look normal again. Operations wants the fleet back in service for the next bank.",
+      "prompt": "How do you return to operations?",
+      "options": [
+        {"id": "a", "text": "Resume normal autonomous operations since the drift has stopped."},
+        {"id": "b", "text": "Resume under supervised mode in the affected zone and hold a lessons-learned review."},
+        {"id": "c", "text": "Ground the whole fleet until the vendor confirms the cause."},
+        {"id": "d", "text": "Resume normally and add the event to next quarter's review list."}
+      ]
+    }
+  ]
+}

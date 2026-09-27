@@ -1,0 +1,29 @@
+{
+  "scenario_id": "sc01",
+  "mapping_status": "DRAFT - verify every entry against NIST SP 800-82 Rev. 3 (NFR-07)",
+  "framework_versions": {
+    "attack_ics": "v19.2",
+    "nist_sp800_82": "Rev. 3"
+  },
+  "attack_tactic": "TA0101",
+  "decision_points": {
+    "dp1": {
+      "a": {"rating": "incorrect", "nist_controls": ["SI-4"], "timeline": "immediate", "rationale": "An unexplained position mismatch is a monitoring alert, not something to ignore."},
+      "b": {"rating": "partial", "nist_controls": ["IR-4"], "timeline": "short_term", "rationale": "Safe stop and escalation are right, but evidence is not preserved."},
+      "c": {"rating": "incorrect", "nist_controls": ["IR-4"], "timeline": "immediate", "rationale": "Restarting before preserving logs can destroy the evidence incident handling needs."},
+      "d": {"rating": "correct", "nist_controls": ["IR-4", "SI-4"], "timeline": null, "rationale": "Contains the hazard, escalates, and preserves evidence."}
+    },
+    "dp2": {
+      "a": {"rating": "incorrect", "nist_controls": ["IR-6"], "timeline": "immediate", "rationale": "A multi-vehicle anomaly must be reported to the people responsible for response."},
+      "b": {"rating": "correct", "nist_controls": ["IR-6", "IR-8"], "timeline": null, "rationale": "Uses the defined incident reporting path to the right parties."},
+      "c": {"rating": "partial", "nist_controls": ["IR-6"], "timeline": "short_term", "rationale": "The vendor matters, but internal security and operations must also be told."},
+      "d": {"rating": "incorrect", "nist_controls": ["IR-6"], "timeline": "immediate", "rationale": "An informal channel is not an incident report and may spread unverified information."}
+    },
+    "dp3": {
+      "a": {"rating": "incorrect", "nist_controls": ["CP-10"], "timeline": "immediate", "rationale": "The drift stopping does not show the cause is gone; recovery needs verification."},
+      "b": {"rating": "correct", "nist_controls": ["CP-10", "IR-4", "SI-4"], "timeline": null, "rationale": "Controlled recovery with continued monitoring and lessons learned."},
+      "c": {"rating": "partial", "nist_controls": ["CP-10"], "timeline": "long_term", "rationale": "Safe but not proportionate; recovery planning should allow controlled restoration."},
+      "d": {"rating": "incorrect", "nist_controls": ["IR-4"], "timeline": "short_term", "rationale": "Lessons learned should follow the incident promptly, not wait for a scheduled review."}
+    }
+  }
+}
