@@ -30,7 +30,7 @@ AutoGSESec fills that gap.
 
 1. **Initial Access (TA0108)** — insider threat and social engineering
 2. **Command and Control (TA0101)** — GPS spoofing
-3. **Impact (TA0106)** — physical consequence and response
+3. **Impact (TA0105)** — physical consequence and response
 
 ---
 
