@@ -1,5 +1,6 @@
 {
   "name": "AutoGSESec",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",
-  "forwardPorts": [5000]
+  "forwardPorts": [5000],
+  "postCreateCommand": "python -m venv .venv && .venv/bin/pip install -r requirements-dev.txt"
 }

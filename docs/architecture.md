@@ -1,10 +1,50 @@
-## Data Design (updated at Hard Stop 2)
+# System Architecture — AutoGSESec
 
-The original draft stored scenarios and rubrics as database tables. As of
-Hard Stop 2, scenario content and framework mappings live in versioned JSON
-files in Git, and the database holds runtime data only. This keeps content
-and control mappings independently updatable as MITRE ATT&CK and NIST
-SP 800-82 are revised.
+Version: v0.1.0 baseline (Implementation Sprint I). Design decisions are documented in the Hard Stop 2 Design Review Package.
+
+## Overview
+
+AutoGSESec is a server-rendered Flask application. Scenario content and framework mappings are versioned JSON files in Git. The database (planned) holds runtime session data only.
+
+```mermaid
+flowchart TB
+    U["Participant browser"] -->|HTTPS form posts| R
+    subgraph F["Flask application"]
+        R["Routes / delivery engine<br/>app.py"]
+        C["Content loader + validator<br/>engine/content.py"]
+        S["Scoring engine<br/>engine/scoring.py (placeholder)"]
+        A["AAR generator<br/>engine/report.py (placeholder)"]
+    end
+    R --> C
+    R --> S --> A
+    C -->|validates at startup| J[("data/<br/>scenarios · mappings · frameworks")]
+    R -->|sessions + responses| D[("Database via SQLAlchemy<br/>(planned)")]
+```
+
+## Components and Status
+
+| Component | File | Responsibility | Status at v0.1.0 |
+|-----------|------|----------------|------------------|
+| Delivery engine | `app.py` | Routes, session state, input validation | Built |
+| Content loader | `engine/content.py` | Loads JSON; refuses to start on missing or unknown mappings | Built |
+| Scoring engine | `engine/scoring.py` | Rule-based scoring and readiness rating | Interface defined; Hard Stop 4 |
+| AAR generator | `engine/report.py` | Gaps, controls, timelines | Interface defined; Hard Stop 4 |
+| Persistence | `models.py` (planned) | Sessions and responses via SQLAlchemy | Sprint II |
+| Pages and styles | `templates/`, `static/` | Pages and persistent disclaimer (FR-09) | Built |
+| Tests | `tests/` | Functional and smoke tests, run by GitHub Actions | Built |
+
+## Planned Interaction: Scoring and Report
+
+When a participant submits decision 3, the planned `/scenario/<id>/report` route will:
+
+1. Collect the participant's answers as `{decision_point_id: option_id}`.
+2. Call `scoring.score_session(scenario, answers)`. It looks up each answer in the scenario's mapping and returns the percent score, readiness rating, and list of gaps.
+3. Call `report.build_report(scenario, score_result)`. It orders gaps by timeline and attaches control names from `data/frameworks.json`.
+4. Render `templates/report.html`.
+
+Neither module reads files or the database. Both receive data the loader has already validated, so they behave as pure functions: the same input always gives the same output (NFR-06), which makes them straightforward to test.
+
+## Data Design
 
 ### Content (versioned JSON in Git)
 
@@ -14,46 +54,20 @@ SP 800-82 are revised.
 | `data/mappings/<id>.json` | Rating, NIST controls, timeline, and rationale per option; ATT&CK tactic; framework versions |
 | `data/frameworks.json` | Valid ATT&CK for ICS tactic IDs and NIST control IDs, with version tags |
 
-`engine/content.py` validates every mapping at startup and refuses to start
-if any option is unmapped or references an unknown ID.
+Content and mappings are kept apart so they can be updated independently when MITRE ATT&CK or NIST SP 800-82 is revised.
 
-### Runtime database (SQLite via SQLAlchemy, built in Hard Stop 3)
+### Runtime database (planned)
 
 **sessions**: session_id (random UUID), scenario_id, content_version, started_at, completed_at, pre_understanding, post_understanding
 
 **responses**: response_id, session_id, decision_point_id, option_id, submitted_at
 
-No field identifies a person (NFR-09). Scores are not stored: the
-after-action report is regenerated from responses and mappings, which
-deterministic scoring makes identical every time (NFR-06).
-
-
-
-
-
-
-
-# OLD:  System Architecture — AutoGSESec
-
-## Three-Tier Web Application
-
-## Stack
-
-| Layer | Technology | Rationale |
-|-------|-----------|-----------|
-| Frontend | HTML, CSS, vanilla JavaScript | No framework overhead |
-| Backend | Python 3.11 + Flask 3.x | Lightweight, beginner-accessible |
-| Database | SQLite via SQLAlchemy | File-based, no server setup |
-| Hosting | Render.com free tier | Auto-deploy from GitHub |
-| Version Control | GitHub — ojanet/autogssec | Public repository |
-
-## Database Schema (draft)
-
-**scenarios** — id, tactic_code, title, description, decision_points
-**responses** — id, session_id, scenario_id, decision_point, selected_option
-**sessions** — id, started_at, completed_at, total_score
-**rubrics** — id, scenario_id, decision_point, option, points, nist_control, timeline
+No field identifies a person (NFR-09). Scores are not stored; the report is regenerated from responses and mappings.
 
 ## Computational Method
 
-Rule-based deterministic scoring. Responses matched against predefined rubric. Points scored divided by points possible produces percentage readiness score. No machine learning — scoring must be fully explainable for a security training tool.
+Deterministic, rule-based scoring. Correct = 2 points, partial = 1, incorrect = 0. Percent = earned ÷ possible × 100. Readiness: Prepared at 80% or above, Developing at 50–79%, Unprepared below 50%. Every score traces to a named NIST control. No machine learning.
+
+## Deployment (planned)
+
+Render free web service, auto-deployed from `main`. Free services spin down after 15 minutes idle and do not keep local files, so production data will use a free Render Postgres database during the testing window (decision recorded at Sprint II, task T4).
