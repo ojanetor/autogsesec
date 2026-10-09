@@ -25,8 +25,8 @@ class ExerciseSession(db.Model):
     session_id = db.Column(db.String(36), primary_key=True, default=new_session_id)
     scenario_id = db.Column(db.String(20), nullable=False)
     content_version = db.Column(db.String(120), nullable=False)
-    started_at = db.Column(db.DateTime, nullable=False, default=utc_now)
-    completed_at = db.Column(db.DateTime)
+    started_at = db.Column(db.DateTime(timezone=True), nullable=False, default=utc_now)
+    completed_at = db.Column(db.DateTime(timezone=True))
     pre_understanding = db.Column(db.Integer)
     post_understanding = db.Column(db.Integer)
 
@@ -48,6 +48,6 @@ class Response(db.Model):
     )
     decision_point_id = db.Column(db.String(20), nullable=False)
     option_id = db.Column(db.String(5), nullable=False)
-    submitted_at = db.Column(db.DateTime, nullable=False, default=utc_now)
+    submitted_at = db.Column(db.DateTime(timezone=True), nullable=False, default=utc_now)
 
     session = db.relationship("ExerciseSession", back_populates="responses")

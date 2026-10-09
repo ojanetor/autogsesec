@@ -1,7 +1,11 @@
-"""Shared test setup: every test gets a fresh, empty in-memory database."""
+"""Shared test setup: every test gets a fresh, empty database.
+
+By default tests use an in-memory SQLite database. Set TEST_DATABASE_URL to run
+the same tests against another database (GitHub Actions uses Postgres).
+"""
 import os
 
-os.environ["DATABASE_URL"] = "sqlite://"
+os.environ["DATABASE_URL"] = os.environ.get("TEST_DATABASE_URL", "sqlite://")
 
 import pytest
 
@@ -15,3 +19,5 @@ def fresh_database():
         db.drop_all()
         db.create_all()
     yield
+    with app.app_context():
+        db.session.remove()
