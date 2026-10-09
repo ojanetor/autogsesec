@@ -1,6 +1,8 @@
 """Persistence tests for sessions and responses (FR-03, NFR-09)."""
+from datetime import timezone
+
 from app import app
-from models import ExerciseSession, Response, db
+from models import ExerciseSession, Response, db, utc_now
 
 
 def walk_through(client, choices):
@@ -60,3 +62,28 @@ def test_schema_has_no_personal_data_columns():
             for table in db.metadata.sorted_tables
         }
     assert columns == {"sessions": expected_sessions, "responses": expected_responses}
+
+def test_timestamps_record_the_correct_moment():
+    """A stored time must equal the real UTC moment, whatever the database's time zone."""
+    before = utc_now()
+    client = app.test_client()
+    walk_through(client, ["d"])
+    after = utc_now()
+    with app.app_context():
+        started = ExerciseSession.query.one().started_at
+    if started.tzinfo is None:
+        started = started.replace(tzinfo=timezone.utc)
+    assert before <= started <= after
+
+
+def test_timestamps_record_the_correct_moment():
+    """A stored time must equal the real UTC moment, whatever the database's time zone."""
+    before = utc_now()
+    client = app.test_client()
+    walk_through(client, ["d"])
+    after = utc_now()
+    with app.app_context():
+        started = ExerciseSession.query.one().started_at
+    if started.tzinfo is None:
+        started = started.replace(tzinfo=timezone.utc)
+    assert before <= started <= after

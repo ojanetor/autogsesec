@@ -4,12 +4,13 @@ from importlib.metadata import version
 
 from flask import Flask, abort, jsonify, redirect, render_template, request, session, url_for
 
+from config import database_url
 from engine.content import load_all
 from models import ExerciseSession, Response, db, utc_now
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-only-change-before-deploying")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///autogsesec.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url()
 
 db.init_app(app)
 with app.app_context():
@@ -59,6 +60,7 @@ def health():
         flask_version=version("flask"),
         sqlalchemy_version=version("sqlalchemy"),
         database=database,
+        database_engine=db.engine.dialect.name,
         scenarios_loaded=len(SCENARIOS),
     )
 
