@@ -108,6 +108,7 @@ Prints the sessions and responses saved in the local database.
 
 ## Repository Structure
 
+```
 autogsesec/
 ├── .devcontainer/devcontainer.json # reproducible Python 3.11 environment
 ├── .github/workflows/tests.yml # runs tests on every push to main and every pull request
@@ -131,6 +132,7 @@ autogsesec/
 ├── CHANGELOG.md
 ├── requirements.txt # runtime dependencies (pinned)
 └── requirements-dev.txt # runtime plus test dependencies
+```
 
 
 ## Documentation
