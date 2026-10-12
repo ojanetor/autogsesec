@@ -5,6 +5,29 @@ Format based on Keep a Changelog; versions follow `vMAJOR.MINOR.PATCH` (see docs
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-11
+
+Hard Stop 3 early validation release.
+
+### Added
+- Database persistence for exercise sessions and responses (SQLAlchemy 2.1, Flask-SQLAlchemy 3.1) — task T3
+- `config.py`: reads `DATABASE_URL`; converts Render-style Postgres URLs for the psycopg 3 driver — task T4
+- Postgres 16 test job in GitHub Actions alongside SQLite; both run every test on every pull request
+- `/health` now reports database status, database engine, and SQLAlchemy version
+- `scripts/inspect_db.py` to print stored sessions and responses
+- `docs/environment.md`: environment variables, databases validated, known gaps
+- Tests: persistence (6), configuration (4); 17 tests in total
+
+### Changed
+- Session cookie now holds only a random session ID; answers live in the database
+- Re-submitting a decision replaces the earlier answer (one answer per decision, enforced by a database constraint)
+
+### Fixed
+- Timestamps were stored without a time zone and shifted by the server's offset on Postgres (I-09)
+
+### Known issues
+See docs/risk-issue-log.md (I-01, I-03, I-04, I-05, I-10 to I-14).
+
 ## [0.1.0] - 2026-10-03
 
 Implementation Sprint I baseline.
