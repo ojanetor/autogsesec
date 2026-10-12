@@ -1,10 +1,10 @@
 # System Architecture — AutoGSESec
 
-Version: v0.1.0 baseline (Implementation Sprint I). Design decisions are documented in the Hard Stop 2 Design Review Package.
+Version: v0.2.0 (Hard Stop 3). Design decisions are documented in the Hard Stop 2 Design Review Package.
 
 ## Overview
 
-AutoGSESec is a server-rendered Flask application. Scenario content and framework mappings are versioned JSON files in Git. The database (planned) holds runtime session data only.
+AutoGSESec is a server-rendered Flask application. Scenario content and framework mappings are versioned JSON files in Git. The database holds runtime session data only (built at v0.2.0).
 
 ```mermaid
 flowchart TB
@@ -18,20 +18,20 @@ flowchart TB
     R --> C
     R --> S --> A
     C -->|validates at startup| J[("data/<br/>scenarios · mappings · frameworks")]
-    R -->|sessions + responses| D[("Database via SQLAlchemy<br/>(planned)")]
+    R -->|sessions + responses| D[("Database via SQLAlchemy<br/>SQLite or Postgres")]
 ```
 
 ## Components and Status
 
-| Component | File | Responsibility | Status at v0.1.0 |
+| Component | File | Responsibility | Status at v0.2.0 |
 |-----------|------|----------------|------------------|
 | Delivery engine | `app.py` | Routes, session state, input validation | Built |
 | Content loader | `engine/content.py` | Loads JSON; refuses to start on missing or unknown mappings | Built |
 | Scoring engine | `engine/scoring.py` | Rule-based scoring and readiness rating | Interface defined; Hard Stop 4 |
 | AAR generator | `engine/report.py` | Gaps, controls, timelines | Interface defined; Hard Stop 4 |
-| Persistence | `models.py` (planned) | Sessions and responses via SQLAlchemy | Sprint II |
+| Persistence | `models.py`, `config.py` | Sessions and responses via SQLAlchemy; database chosen by `DATABASE_URL` | Built (v0.2.0) |
 | Pages and styles | `templates/`, `static/` | Pages and persistent disclaimer (FR-09) | Built |
-| Tests | `tests/` | Functional and smoke tests, run by GitHub Actions | Built |
+| Tests | `tests/` | Functional, persistence, config and smoke tests, run on SQLite and Postgres by GitHub Actions | Built |
 
 ## Planned Interaction: Scoring and Report
 
@@ -56,7 +56,7 @@ Neither module reads files or the database. Both receive data the loader has alr
 
 Content and mappings are kept apart so they can be updated independently when MITRE ATT&CK or NIST SP 800-82 is revised.
 
-### Runtime database (planned)
+### Runtime database (built at v0.2.0)
 
 **sessions**: session_id (random UUID), scenario_id, content_version, started_at, completed_at, pre_understanding, post_understanding
 
@@ -70,4 +70,4 @@ Deterministic, rule-based scoring. Correct = 2 points, partial = 1, incorrect = 
 
 ## Deployment (planned)
 
-Render free web service, auto-deployed from `main`. Free services spin down after 15 minutes idle and do not keep local files, so production data will use a free Render Postgres database during the testing window (decision recorded at Sprint II, task T4).
+Render free web service, auto-deployed from `main`. Free services spin down after 15 minutes idle and do not keep local files, so production data will use a free Render Postgres database during the testing window. The Postgres path is validated in GitHub Actions; Render Postgres itself will be tested at first deployment (T11).

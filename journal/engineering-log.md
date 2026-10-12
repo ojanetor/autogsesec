@@ -47,3 +47,17 @@
 - Branch strategy adopted; v0.1.0 baseline tagged
 
 **Slipped:** database persistence (T3) moved to Sprint II
+
+## Week 6 — Hard Stop 3
+
+**Completed:**
+- T3: sessions and responses saved with SQLAlchemy; data survives restarts
+- T4: `DATABASE_URL` configuration; Postgres 16 test job added to GitHub Actions
+- Found and fixed a time-zone defect (I-09) that only appeared on Postgres
+- README, environment notes, risk and issue log updated; v0.2.0 tagged
+
+**Recovered:** the one-week T3 slip from Sprint I
+
+**Started, not finished:** scoring engine (T7), paused to prepare the Hard Stop 3 package
+
+**Next:** sc02 and sc03 content (T5), then scoring (T7)
