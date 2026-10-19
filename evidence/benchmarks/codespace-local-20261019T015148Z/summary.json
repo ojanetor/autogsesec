@@ -1,0 +1,52 @@
+{
+  "label": "codespace-local",
+  "base_url": "http://127.0.0.1:5000",
+  "utc_time": "20261019T015148Z",
+  "runs": 20,
+  "answers": [
+    "d",
+    "b",
+    "c"
+  ],
+  "warm_up": true,
+  "nfr01_limit_seconds": 3.0,
+  "nfr01_score_displays_under_limit": 20,
+  "nfr01_score_displays_total": 20,
+  "steps": {
+    "start + decision 1": {
+      "n": 20,
+      "min": 0.009,
+      "median": 0.0126,
+      "p95": 0.0536,
+      "max": 0.0612
+    },
+    "submit decision 1": {
+      "n": 20,
+      "min": 0.0085,
+      "median": 0.0138,
+      "p95": 0.0591,
+      "max": 0.0906
+    },
+    "submit decision 2": {
+      "n": 20,
+      "min": 0.0085,
+      "median": 0.0118,
+      "p95": 0.0398,
+      "max": 0.0592
+    },
+    "submit decision 3 + score page": {
+      "n": 20,
+      "min": 0.0134,
+      "median": 0.0224,
+      "p95": 0.043,
+      "max": 0.0648
+    },
+    "after-action report": {
+      "n": 20,
+      "min": 0.0021,
+      "median": 0.0029,
+      "p95": 0.0095,
+      "max": 0.0095
+    }
+  }
+}

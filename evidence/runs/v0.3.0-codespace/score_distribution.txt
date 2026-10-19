@@ -1,0 +1,15 @@
+sc01: Drifting Positions: GPS Spoofing on the Ramp
+  answer combinations scored: 64
+  score distribution:
+      0.0%    8  ########
+     16.7%   12  ############
+     33.3%   18  ##################
+     50.0%   13  #############
+     66.7%    9  #########
+     83.3%    3  ###
+    100.0%    1  #
+  readiness bands:
+    Prepared      4  (6.2%)
+    Developing   22  (34.4%)
+    Unprepared   38  (59.4%)
+
