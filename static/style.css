@@ -62,3 +62,14 @@ body {
   text-decoration: none;
   cursor: pointer;
 }
+.score h2 { font-size: 1.8rem; margin: 0.25rem 0; color: var(--accent); }
+.rating {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.rating-correct { background: #1f3b2a; color: #7ee2a8; }
+.rating-partial { background: #3b3416; color: #f5d76e; }
+.rating-incorrect { background: #3b1f1f; color: #ff9b9b; }

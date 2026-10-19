@@ -6,6 +6,7 @@ from flask import Flask, abort, jsonify, redirect, render_template, request, ses
 
 from config import database_url
 from engine.content import load_all
+from engine.scoring import score_session
 from models import ExerciseSession, Response, db, utc_now
 
 app = Flask(__name__)
@@ -140,13 +141,15 @@ def summary(scenario_id):
             "prompt": point["prompt"],
             "choice": option["text"],
             "controls": entry["nist_controls"],
+            "rating": entry["rating"],
         })
 
     if exercise.completed_at is None:
         exercise.completed_at = utc_now()
         db.session.commit()
 
-    return render_template("summary.html", scenario=scenario, rows=rows)
+    score = score_session(scenario, answers)
+    return render_template("summary.html", scenario=scenario, rows=rows, score=score)
 
 
 if __name__ == "__main__":

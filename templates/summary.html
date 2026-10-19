@@ -2,11 +2,19 @@
 {% block content %}
 <h1>Session summary</h1>
 <p class="meta">{{ scenario.title }}</p>
-<p>Your decisions were captured. Scoring and the full after-action report come in a later build phase.</p>
+
+<section class="card score">
+  <p class="meta">Readiness</p>
+  <h2>{{ score.readiness }}</h2>
+  <p>{{ score.earned }} of {{ score.possible }} points ({{ score.percent }}%)</p>
+  <p class="meta">Scored by fixed rules mapped to NIST SP 800-82 controls. The full after-action report comes in a later build phase.</p>
+</section>
+
 {% for row in rows %}
   <section class="card">
     <h2>{{ row.prompt }}</h2>
     <p><strong>Your decision:</strong> {{ row.choice }}</p>
+    <p><span class="rating rating-{{ row.rating }}">{{ row.rating | capitalize }}</span></p>
     <p class="meta">Mapped NIST controls: {{ row.controls | join(", ") }}</p>
   </section>
 {% endfor %}

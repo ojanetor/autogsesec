@@ -54,8 +54,12 @@ def _validate(scenario, mapping, known_tactics, known_controls):
                 raise ValueError(f"{where}: rating must be correct, partial or incorrect")
             if entry.get("timeline") not in TIMELINES:
                 raise ValueError(f"{where}: unknown timeline {entry.get('timeline')}")
+            if entry["rating"] != "correct" and entry.get("timeline") is None:
+                raise ValueError(f"{where}: a partial or incorrect answer needs a timeline")
             if not entry["nist_controls"]:
                 raise ValueError(f"{where}: needs at least one NIST control")
             for control in entry["nist_controls"]:
                 if control not in known_controls:
                     raise ValueError(f"{where}: unknown NIST control {control}")
+        if not any(e["rating"] == "correct" for e in point_map.values()):
+            raise ValueError(f"{sid} {point['id']}: needs at least one correct option")
