@@ -12,6 +12,10 @@ import pytest
 from app import app
 from models import db
 
+# Most tests post forms without a CSRF token. tests/test_security.py turns
+# CSRF protection back on to check that it works.
+app.config["WTF_CSRF_ENABLED"] = False
+
 
 @pytest.fixture(autouse=True)
 def fresh_database():

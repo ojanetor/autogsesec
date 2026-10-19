@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Something went wrong · AutoGSESec{% endblock %}
+{% block content %}
+<h1>We could not score this session</h1>
+<section class="card">
+  <p>Your responses are saved. The scoring rules for this scenario could not be applied, so no score is shown rather than an incorrect one.</p>
+  <p class="meta">The problem has been logged for the project maintainer.</p>
+</section>
+<a class="button" href="{{ url_for('home') }}">Back to scenario library</a>
+{% endblock %}

@@ -7,7 +7,7 @@
   <p class="meta">Readiness</p>
   <h2>{{ score.readiness }}</h2>
   <p>{{ score.earned }} of {{ score.possible }} points ({{ score.percent }}%)</p>
-  <p class="meta">Scored by fixed rules mapped to NIST SP 800-82 controls. The full after-action report comes in a later build phase.</p>
+  <p class="meta">Scored by fixed rules mapped to NIST SP 800-82 controls. Open the after-action report for recommended controls and timelines.</p>
 </section>
 
 {% for row in rows %}
@@ -18,5 +18,6 @@
     <p class="meta">Mapped NIST controls: {{ row.controls | join(", ") }}</p>
   </section>
 {% endfor %}
-<a class="button" href="{{ url_for('home') }}">Back to scenario library</a>
+<a class="button" href="{{ url_for('report', scenario_id=scenario.id) }}">View after-action report</a>
+<a class="button secondary" href="{{ url_for('home') }}">Back to scenario library</a>
 {% endblock %}
