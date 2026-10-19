@@ -63,3 +63,8 @@ def _validate(scenario, mapping, known_tactics, known_controls):
                     raise ValueError(f"{where}: unknown NIST control {control}")
         if not any(e["rating"] == "correct" for e in point_map.values()):
             raise ValueError(f"{sid} {point['id']}: needs at least one correct option")
+
+def load_control_names():
+    """Return {control_id: control_name} from data/frameworks.json."""
+    frameworks = _read_json(DATA_DIR / "frameworks.json")
+    return dict(frameworks["nist_sp800_82"]["controls"])        

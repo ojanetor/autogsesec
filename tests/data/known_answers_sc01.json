@@ -1,0 +1,61 @@
+{
+  "description": "Known-answer cases for sc01. Each expected value was worked out by hand from data/mappings/sc01_gps_spoofing.json (2 points correct, 1 partial, 0 incorrect; Prepared >= 80%, Developing >= 50%).",
+  "scenario_id": "sc01",
+  "cases": [
+    {
+      "id": "K1",
+      "purpose": "Best answer at every decision",
+      "answers": {"dp1": "d", "dp2": "b", "dp3": "b"},
+      "expected": {"earned": 6, "percent": 100.0, "readiness": "Prepared",
+                   "gap_order": [], "recommended": {}}
+    },
+    {
+      "id": "K2",
+      "purpose": "Worst answers; every gap is immediate",
+      "answers": {"dp1": "a", "dp2": "a", "dp3": "a"},
+      "expected": {"earned": 0, "percent": 0.0, "readiness": "Unprepared",
+                   "gap_order": ["dp1", "dp2", "dp3"],
+                   "recommended": {"immediate": ["SI-4", "IR-6", "CP-10"]}}
+    },
+    {
+      "id": "K3",
+      "purpose": "All partial; score sits exactly on the 50% boundary",
+      "answers": {"dp1": "b", "dp2": "c", "dp3": "c"},
+      "expected": {"earned": 3, "percent": 50.0, "readiness": "Developing",
+                   "gap_order": ["dp1", "dp2", "dp3"],
+                   "recommended": {"short_term": ["IR-4", "IR-6"], "long_term": ["CP-10"]}}
+    },
+    {
+      "id": "K4",
+      "purpose": "One partial answer still reaches Prepared (83.3%)",
+      "answers": {"dp1": "d", "dp2": "b", "dp3": "c"},
+      "expected": {"earned": 5, "percent": 83.3, "readiness": "Prepared",
+                   "gap_order": ["dp3"],
+                   "recommended": {"long_term": ["CP-10"]}}
+    },
+    {
+      "id": "K5",
+      "purpose": "Gaps ordered by timeline, not by decision order",
+      "answers": {"dp1": "d", "dp2": "d", "dp3": "d"},
+      "expected": {"earned": 2, "percent": 33.3, "readiness": "Unprepared",
+                   "gap_order": ["dp2", "dp3"],
+                   "recommended": {"immediate": ["IR-6"], "short_term": ["IR-4"]}}
+    },
+    {
+      "id": "K6",
+      "purpose": "Same control missed twice is recommended once, at the earliest timeline",
+      "answers": {"dp1": "c", "dp2": "b", "dp3": "d"},
+      "expected": {"earned": 2, "percent": 33.3, "readiness": "Unprepared",
+                   "gap_order": ["dp1", "dp3"],
+                   "recommended": {"immediate": ["IR-4"]}}
+    },
+    {
+      "id": "K7",
+      "purpose": "Immediate gap listed before an earlier short-term gap",
+      "answers": {"dp1": "b", "dp2": "a", "dp3": "b"},
+      "expected": {"earned": 3, "percent": 50.0, "readiness": "Developing",
+                   "gap_order": ["dp2", "dp1"],
+                   "recommended": {"immediate": ["IR-6"], "short_term": ["IR-4"]}}
+    }
+  ]
+}

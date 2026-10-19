@@ -3,21 +3,28 @@ import sys
 from importlib.metadata import version
 
 from flask import Flask, abort, jsonify, redirect, render_template, request, session, url_for
+from flask_wtf.csrf import CSRFProtect
 
-from config import database_url
-from engine.content import load_all
-from engine.scoring import score_session
+from config import database_url, is_production, secret_key
+from engine.content import load_all, load_control_names
+from engine.report import build_report
+from engine.scoring import ScoringError, score_session
 from models import ExerciseSession, Response, db, utc_now
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "dev-only-change-before-deploying")
+app.secret_key = secret_key()
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url()
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {"pool_pre_ping": True}
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = is_production()
 
+csrf = CSRFProtect(app)
 db.init_app(app)
 with app.app_context():
     db.create_all()
 
 SCENARIOS = load_all()
+CONTROL_NAMES = load_control_names()
 
 
 def get_scenario_or_404(scenario_id):
@@ -41,6 +48,20 @@ def current_exercise(scenario_id):
     if exercise is None or exercise.scenario_id != scenario_id:
         return None
     return exercise
+
+
+def complete_answers(scenario, exercise):
+    """Return {decision_point_id: option_id} if every decision is answered, else None."""
+    answers = {r.decision_point_id: r.option_id for r in exercise.responses}
+    if any(point["id"] not in answers for point in scenario["decision_points"]):
+        return None
+    return answers
+
+
+def mark_complete(exercise):
+    if exercise.completed_at is None:
+        exercise.completed_at = utc_now()
+        db.session.commit()
 
 
 @app.route("/")
@@ -128,13 +149,13 @@ def summary(scenario_id):
     exercise = current_exercise(scenario_id)
     if exercise is None:
         return redirect(url_for("start", scenario_id=scenario_id))
+    answers = complete_answers(scenario, exercise)
+    if answers is None:
+        return redirect(url_for("start", scenario_id=scenario_id))
 
-    answers = {r.decision_point_id: r.option_id for r in exercise.responses}
     rows = []
     for point in scenario["decision_points"]:
-        chosen_id = answers.get(point["id"])
-        if chosen_id is None:
-            return redirect(url_for("start", scenario_id=scenario_id))
+        chosen_id = answers[point["id"]]
         option = next(o for o in point["options"] if o["id"] == chosen_id)
         entry = scenario["mapping"][point["id"]][chosen_id]
         rows.append({
@@ -144,12 +165,35 @@ def summary(scenario_id):
             "rating": entry["rating"],
         })
 
-    if exercise.completed_at is None:
-        exercise.completed_at = utc_now()
-        db.session.commit()
-
-    score = score_session(scenario, answers)
+    mark_complete(exercise)
+    try:
+        score = score_session(scenario, answers)
+    except ScoringError:
+        app.logger.exception("Scoring failed for session %s", exercise.session_id)
+        return render_template("error.html"), 500
     return render_template("summary.html", scenario=scenario, rows=rows, score=score)
+
+
+@app.route("/scenario/<scenario_id>/report")
+def report(scenario_id):
+    """After-action report (FR-06 to FR-08), regenerated from stored responses."""
+    scenario = get_scenario_or_404(scenario_id)
+    exercise = current_exercise(scenario_id)
+    if exercise is None:
+        return redirect(url_for("start", scenario_id=scenario_id))
+    answers = complete_answers(scenario, exercise)
+    if answers is None:
+        return redirect(url_for("start", scenario_id=scenario_id))
+
+    mark_complete(exercise)
+    try:
+        score = score_session(scenario, answers)
+        aar = build_report(scenario, score, CONTROL_NAMES)
+    except ScoringError:
+        # UC-01 exception path: responses stay saved; nothing is scored incorrectly.
+        app.logger.exception("Report failed for session %s", exercise.session_id)
+        return render_template("error.html"), 500
+    return render_template("report.html", scenario=scenario, report=aar, exercise=exercise)
 
 
 if __name__ == "__main__":

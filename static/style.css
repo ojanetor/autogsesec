@@ -73,3 +73,9 @@ body {
 .rating-correct { background: #1f3b2a; color: #7ee2a8; }
 .rating-partial { background: #3b3416; color: #f5d76e; }
 .rating-incorrect { background: #3b1f1f; color: #ff9b9b; }
+
+.button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); margin-left: 0.5rem; }
+.controls { margin: 0.5rem 0 0; padding-left: 1.2rem; }
+.controls li { margin: 0.4rem 0; }
+h3 { margin: 0.25rem 0 0.5rem; }
+
