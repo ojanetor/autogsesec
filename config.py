@@ -20,7 +20,11 @@ def database_url():
     Render give Postgres URLs that start with "postgres://" or "postgresql://";
     SQLAlchemy needs "postgresql+psycopg://" to use the psycopg 3 driver.
     """
-    url = os.environ.get("DATABASE_URL", DEFAULT_DATABASE_URL)
+    url = os.environ.get("DATABASE_URL")
+    if not url:
+        if is_production():
+            raise RuntimeError("DATABASE_URL must be set in production")
+        url = DEFAULT_DATABASE_URL
     for prefix in ("postgres://", "postgresql://"):
         if url.startswith(prefix):
             return "postgresql+psycopg://" + url[len(prefix):]
