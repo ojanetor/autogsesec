@@ -119,8 +119,8 @@ autogsesec/
 ├── models.py # database tables: sessions, responses
 ├── engine/
 │ ├── content.py # loads and validates scenarios and mappings
-│ ├── scoring.py # placeholder (Hard Stop 4)
-│ └── report.py # placeholder (Hard Stop 4)
+│ ├── scoring.py # deterministic scoring engine
+│ └── report.py # after-action report generator
 ├── data/
 │ ├── frameworks.json # valid ATT&CK and NIST IDs with versions
 │ ├── scenarios/ # story content only

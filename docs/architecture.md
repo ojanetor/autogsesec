@@ -1,48 +1,52 @@
 # System Architecture — AutoGSESec
 
-Version: v0.2.0 (Hard Stop 3). Design decisions are documented in the Hard Stop 2 Design Review Package.
+Version: v0.3.0 (Hard Stop 4). Design decisions are documented in the Hard Stop 2 Design Review Package.
 
 ## Overview
 
-AutoGSESec is a server-rendered Flask application. Scenario content and framework mappings are versioned JSON files in Git. The database holds runtime session data only (built at v0.2.0).
+AutoGSESec is a server-rendered Flask application deployed on Render with Render Postgres. Scenario content and framework mappings are versioned JSON files in Git. The database holds runtime session data only.
 
 ```mermaid
 flowchart TB
-    U["Participant browser"] -->|HTTPS form posts| R
-    subgraph F["Flask application"]
+    U["Participant browser"] -->|"HTTPS form posts + CSRF token"| R
+    subgraph F["Flask application on Render (gunicorn, 1 worker)"]
         R["Routes / delivery engine<br/>app.py"]
         C["Content loader + validator<br/>engine/content.py"]
-        S["Scoring engine<br/>engine/scoring.py (placeholder)"]
-        A["AAR generator<br/>engine/report.py (placeholder)"]
+        S["Scoring engine<br/>engine/scoring.py"]
+        A["After-action report<br/>engine/report.py"]
     end
     R --> C
     R --> S --> A
     C -->|validates at startup| J[("data/<br/>scenarios · mappings · frameworks")]
-    R -->|sessions + responses| D[("Database via SQLAlchemy<br/>SQLite or Postgres")]
+    R -->|sessions + responses| D[("Render Postgres<br/>SQLite in local development")]
 ```
 
 ## Components and Status
 
-| Component | File | Responsibility | Status at v0.2.0 |
+| Component | File | Responsibility | Status at v0.3.0 |
 |-----------|------|----------------|------------------|
-| Delivery engine | `app.py` | Routes, session state, input validation | Built |
+| Delivery engine | `app.py` | Routes, session state, input validation, CSRF | Built |
 | Content loader | `engine/content.py` | Loads JSON; refuses to start on missing or unknown mappings | Built |
-| Scoring engine | `engine/scoring.py` | Rule-based scoring and readiness rating | Interface defined; Hard Stop 4 |
-| AAR generator | `engine/report.py` | Gaps, controls, timelines | Interface defined; Hard Stop 4 |
-| Persistence | `models.py`, `config.py` | Sessions and responses via SQLAlchemy; database chosen by `DATABASE_URL` | Built (v0.2.0) |
-| Pages and styles | `templates/`, `static/` | Pages and persistent disclaimer (FR-09) | Built |
-| Tests | `tests/` | Functional, persistence, config and smoke tests, run on SQLite and Postgres by GitHub Actions | Built |
+| Scoring engine | `engine/scoring.py` | Rule-based scoring, readiness rating, gap ordering | Built; 7 known-answer cases, 64-path test |
+| After-action report | `engine/report.py` | Decision review, recommended controls grouped by timeline | Built |
+| Configuration | `config.py` | Database and secret key from environment; production refuses to start without either | Built |
+| Persistence | `models.py` | Sessions and responses via SQLAlchemy | Built; Render Postgres |
+| Pages and styles | `templates/`, `static/` | Pages, report, error page, persistent disclaimer (FR-09) | Built |
+| Tests | `tests/` | 52 tests, run on SQLite and Postgres 16 on every pull request | Built |
+| Evidence tools | `scripts/benchmark.py`, `scripts/collect_evidence.py` | Latency benchmark; dated evidence records | Built |
+| Pre/post rating (FR-10) | — | Self-rated understanding before and after | Not started (Week 9) |
+| Facilitator view, export (FR-11, FR-12) | — | Optional features | Not started |
 
-## Planned Interaction: Scoring and Report
+## Scoring and Report Flow
 
-When a participant submits decision 3, the planned `/scenario/<id>/report` route will:
+When a participant submits decision 3, the app shows the summary, and the `/scenario/<id>/report` route:
 
-1. Collect the participant's answers as `{decision_point_id: option_id}`.
-2. Call `scoring.score_session(scenario, answers)`. It looks up each answer in the scenario's mapping and returns the percent score, readiness rating, and list of gaps.
-3. Call `report.build_report(scenario, score_result)`. It orders gaps by timeline and attaches control names from `data/frameworks.json`.
-4. Render `templates/report.html`.
+1. Rebuilds the participant's answers from the database as `{decision_point_id: option_id}`.
+2. Calls `scoring.score_session(scenario, answers)`, which returns points, percent, readiness rating, and gaps ordered Immediate, Short-term, Long-term.
+3. Calls `report.build_report(scenario, score_result, control_names)`, which lists each recommended control once, at the earliest timeline any gap needs it.
+4. Renders `templates/report.html`. If scoring fails, it shows `templates/error.html` instead, and the saved responses are kept.
 
-Neither module reads files or the database. Both receive data the loader has already validated, so they behave as pure functions: the same input always gives the same output (NFR-06), which makes them straightforward to test.
+Neither module reads files or the database. Both receive data the loader has already validated, so the same input always gives the same output (NFR-06).
 
 ## Data Design
 
@@ -54,9 +58,7 @@ Neither module reads files or the database. Both receive data the loader has alr
 | `data/mappings/<id>.json` | Rating, NIST controls, timeline, and rationale per option; ATT&CK tactic; framework versions |
 | `data/frameworks.json` | Valid ATT&CK for ICS tactic IDs and NIST control IDs, with version tags |
 
-Content and mappings are kept apart so they can be updated independently when MITRE ATT&CK or NIST SP 800-82 is revised.
-
-### Runtime database (built at v0.2.0)
+### Runtime database
 
 **sessions**: session_id (random UUID), scenario_id, content_version, started_at, completed_at, pre_understanding, post_understanding
 
@@ -66,8 +68,8 @@ No field identifies a person (NFR-09). Scores are not stored; the report is rege
 
 ## Computational Method
 
-Deterministic, rule-based scoring. Correct = 2 points, partial = 1, incorrect = 0. Percent = earned ÷ possible × 100. Readiness: Prepared at 80% or above, Developing at 50–79%, Unprepared below 50%. Every score traces to a named NIST control. No machine learning.
+Deterministic, rule-based scoring. Correct = 2 points, partial = 1, incorrect = 0. Percent = earned ÷ possible × 100. Readiness: Prepared at 80% or above, Developing at 50–79%, Unprepared below 50%, compared with whole-number arithmetic so boundary scores are never misjudged by rounding. Every score traces to a named NIST control. No machine learning.
 
-## Deployment (planned)
+## Deployment
 
-Render free web service, auto-deployed from `main`. Free services spin down after 15 minutes idle and do not keep local files, so production data will use a free Render Postgres database during the testing window. The Postgres path is validated in GitHub Actions; Render Postgres itself will be tested at first deployment (T11).
+Render free web service, auto-deployed from `main`, start command `gunicorn app:app --workers 1`, with Render Postgres (free tier, expires about 30 days after creation). Free services spin down after about 15 minutes idle; measured wake-up time is about 32 seconds (see `docs/evidence-index.md`).
