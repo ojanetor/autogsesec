@@ -43,17 +43,16 @@ Citation: Anthropic. (2026). *Claude* (October 26 version) [Large language model
 | Oct 2026 | Evidence index, changelog, risk log, environment notes, README | Edited the text from the evidence files | Accepted corrections from edit; checked every number against `summary.json`, `known_answers.md`, and `tests.txt` | Numbers match the files | Accepted; tag `v0.3.0` and evidence record; published the GitHub Release |
 | Oct 2026 | Hard Stop 4 package | Edited the package and compared content from the repo evidence and feedback | Kept full scope. Split open items across Assignments 9 and 10. Rechecked package against feedback and repo | Compared every number with the evidence files | Accepted with additional changes |
 
-### AI suggestions I rejected or corrected
+### AI suggestions that were rejected or corrected
 
 | AI suggestion or output | What I did | Why |
 |---|---|---|
-| Delivering code changes as a zip file | Rejected; switched to copy-and-paste into the editor | My laptop is at capacity, and I want to make each change myself |
-| Editing files with terminal heredoc blocks | Rejected | They dropped edits; pasting into the editor is more reliable |
-| Giving the AI push access to the repository | Declined | I make every change hands-on so I understand it |
-| Referring to requirements and issues by ID codes in instructions | Corrected: asked for plain names | So I don't have to keep looking up earlier tables |
+| Delivering code changes as a zip file | Rejected; switched to editor text on a chase-by-chase basis | Makes identifying the edits and corrections clear |
+| Editing files with terminal heredoc blocks | Rejected | Not a reliable editing format |
+| Giving the AI push access to the repository | Declined | I make every change hands-on so I understand what is being pushed |
+| Referring to requirements and issues by ID codes in instructions | Corrected: asked for plain names | For readability and context comprehension |
 | First list of open items after Hard Stop 4 | Corrected: asked for re-verification against the repo, which found four missed items (three new controls, recruiting reviewers, clearing test data, recreating the database) | Accuracy |
 | Package wording that reported open items only in Assignment 9 | Corrected to Assignments 9 and 10 | Matches my actual plan |
-| Longer wording about the supervisor's response to my midpoint questions | Replaced with "Student chose to keep the full scope." | The decision was mine |
 | Architecture rows saying "Not started" for planned features | Corrected to show the scheduled week | Conflicted with my no-cuts decision |
 | Naming control PS-3 "Personnel Termination" | Correction pending: PS-3 is Personnel Screening and PS-4 is Personnel Termination; the correct control will be confirmed against the NIST catalog before the Initial Access scenario is written | Every control must be verifiable |
 
@@ -69,4 +68,4 @@ Citation: Anthropic. (2026). *Claude* (October 26 version) [Large language model
 
 ### Statement
 
-Every requirement, threshold, scoring rule, scope decision, and interpretation in Hard Stop 4 is mine. The AI drafted and edited code and text, diagnosed errors from output I gave it, and checked the repository for consistency. I verified each change by hand calculation, tests on two databases, live checks on the deployed site, or comparison with the evidence files. Where AI output has not yet been independently validated (rubric mappings, time estimates), the package says so.
+Every requirement, threshold, scoring rule, scope decision, and interpretation in Hard Stop 4 is mine. The AI tracked and edited code and text, diagnosed errors from output I gave it, and checked the repository for consistency. I verified each change by hand calculation, tests on two databases, live checks on the deployed site, or comparison with the evidence files. Where AI output has not yet been independently validated (rubric mappings, time estimates), the package says so.
