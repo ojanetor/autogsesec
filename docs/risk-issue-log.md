@@ -1,6 +1,6 @@
 # Risk and Issue Log — AutoGSESec
 
-Last reviewed: 2026-10-11 (Hard Stop 3). Reviewed at the end of every sprint and hard stop.
+Last reviewed: 2026-10-25 (Hard Stop 4). Reviewed at the end of every sprint and hard stop.
 
 **Severity:** High = blocks the minimum viable artifact or invalidates results. Medium = degrades a requirement; a workaround exists. Low = minor or unlikely.
 **Status:** Open, Monitoring, Mitigated, Closed.
@@ -8,35 +8,35 @@ Last reviewed: 2026-10-11 (Hard Stop 3). Reviewed at the end of every sprint and
 
 ## Risks
 
-| ID | Risk | Severity | Mitigation | Status |
-|----|------|----------|-----------|--------|
-| R-01 | Rubric mappings are wrong or unjustifiable | High | Draft content labeled; startup validator; NFR-07 independent spot-check of at least 30% of entries, starting with sc02/sc03 (T5) | Open |
-| R-02 | Render free tier deletes local files, wiping a SQLite database | Medium (was High) | Postgres path validated in CI on every pull request (HS3); `DATABASE_URL` accepts Render's URL format; Render Postgres itself still untested (I-11) | Mitigated |
-| R-03 | Free-tier cold start (about one minute) breaks NFR-01 | Medium | Warm the service before timed tests; report cold starts separately | Open |
-| R-04 | ATT&CK or SP 800-82 revised mid-project | Medium | Version tags; separated mappings; version tag stored with every session (HS3); re-audit at each hard stop | Monitoring |
-| R-05 | Schedule slip: database persistence (T3) one week behind plan | Medium | T3 and T4 completed in Week 6 (HS3); slip recovered | Closed |
-| R-06 | Public deployment before CSRF protection | Medium | Security hardening (T10) must finish before deployment (T11) | Open |
-| R-07 | Peer reviewers unavailable in Week 9 | Medium | Recruit by Week 7; recorded local demo as fallback | Open |
-| R-08 | Codespaces free hours exhausted | Low | 2-core machine only; stop when idle; delete unused codespaces | Mitigated |
-| R-09 | Scenario content misused for attacks (dual use) | Low | Conceptual content only, from public MITRE and NIST sources | Mitigated |
-| R-10 | Scenario content (T5) not ready for the midpoint demo; only sc01 exists | High | T5 is the next sprint's first task; scoring work paused until sc02 drafts exist | Open |
-| R-11 | Tests pass on SQLite but fail on Postgres (database behavior differs) | Medium | Every pull request runs all tests on both databases (HS3) | Mitigated |
+| ID | Risk | Severity | Mitigation | Evidence for current rating | Status |
+|----|------|----------|-----------|-----------------------------|--------|
+| R-01 | Rubric mappings are wrong or unjustifiable | High | Startup validator; independent audit of at least 30% of entries with sc02/sc03 | Only structural checks exist; no content audit yet | Open |
+| R-02 | Render free tier deletes local files, wiping a SQLite database | Low (was Medium) | Render Postgres connected; production refuses to start without `DATABASE_URL` | `/health` on Render reports `postgresql`; configuration test | Mitigated |
+| R-03 | Free-tier cold start breaks the 3-second requirement | Medium | Report warm and cold results separately; warm the service before demos and peer sessions | Warm: 20 of 20 under 3 s (median 0.16 s); cold runs in `evidence/benchmarks/` | Open |
+| R-04 | ATT&CK or SP 800-82 revised mid-project | Medium | Version tags stored with every session; re-audit at each hard stop | SP 800-82 Rev. 4 draft published September 2026 | Monitoring |
+| R-06 | Public deployment before CSRF protection | Low (was Medium) | CSRF on all forms; secure cookies | Live probe: form post without token returns 400 | Mitigated |
+| R-07 | Peer reviewers unavailable | High (was Medium) | Recruit three reviewers now for early November; recorded demo as fallback | No reviewers confirmed yet | Open |
+| R-08 | Codespaces free hours exhausted | Low | 2-core machine; stop when idle | — | Mitigated |
+| R-09 | Scenario content misused (dual use) | Low | Conceptual content only, public MITRE and NIST sources | — | Mitigated |
+| R-10 | sc02 and sc03 not ready in time for peer testing | High | First task of Week 9; peer testing moved to Week 10 | Content task two weeks behind plan | Open |
+| R-11 | Tests pass on SQLite but fail on Postgres | Low | Every pull request runs all tests on both | Both CI jobs green since HS3 | Mitigated |
+| R-12 | Free Render Postgres expires about 30 days after creation | Medium | Recreate the database before the final demo; data is test data only | Render free-tier policy | Open |
 
 ## Known Issues
 
 | ID | Issue | Severity | Action | Target | Status |
 |----|-------|----------|--------|--------|--------|
-| I-01 | sc01 scenario and mapping are drafts, not yet audited | Medium | NFR-07 audit | HS4 | Open |
-| I-02 | Answers held only in the session cookie; not saved (FR-03 partial) | Medium | Database persistence (T3) | Sprint II | Closed |
-| I-03 | Scoring engine and report are placeholders | High | Implement T7 and T8 | HS4 | Open |
-| I-04 | No CSRF protection on forms | Medium | Add in T10 | HS5 | Open |
-| I-05 | Development SECRET_KEY fallback in code | Medium | Require environment variable in production | HS5 | Open |
-| I-06 | Statistical treatment of usability and survey data not specified (HS2 feedback) | Low | Plan recorded: descriptive statistics only (see Sprint I reflection) | Sprint I | Closed |
-| I-07 | Force push to main on 2026-09-27 overwrote remote history | Low | Repository verified complete against the HS2 package; no-force-push rule added to conventions | Sprint I | Closed |
-| I-08 | docs/architecture.md contained a superseded schema | Low | Rewritten for v0.1.0 | Sprint I | Closed |
-| I-09 | Timestamps stored without a time zone; on a Postgres server set to another zone, times were shifted by the server's offset | High | Found by the Postgres test run; columns changed to time-zone-aware; regression test added; CI runs Postgres in a non-UTC zone (`PGTZ`) | HS3 | Closed |
-| I-10 | No schema migrations; `db.create_all()` creates missing tables but never changes existing ones | Medium | Workaround: delete local `instance/autogsesec.db` after a model change. Fix: add a migration tool before deployment | HS5 | Open |
-| I-11 | Render Postgres not tested directly; only Postgres 16 in GitHub Actions | Medium | Test during first deployment (T11) | Week 8 | Open |
-| I-12 | Abandoned sessions accumulate; every "Start" creates a row | Low | Purge rule for sessions with no completion time, before the testing window | HS5 | Open |
-| I-13 | SQLite returns stored times without a time zone marker; correct only by the convention that all times are UTC | Low | Documented in docs/environment.md; Postgres stores the zone explicitly | HS3 | Monitoring |
-| I-14 | Codespace runs Python 3.11.16; CI installs the latest 3.11 patch, so patch versions can differ | Low | Only the minor version (3.11) is pinned; acceptable. Pin the patch version if a difference ever appears | — | Monitoring |
+| I-01 | sc01 scenario and mapping are drafts, not yet audited | Medium | Mapping audit | Week 9 | Open |
+| I-03 | Scoring engine and report were placeholders | High | Implemented and tested with known answers | HS4 | Closed |
+| I-04 | No CSRF protection on forms | Medium | Flask-WTF CSRF added | HS4 | Closed |
+| I-05 | Development SECRET_KEY fallback in code | Medium | Production refuses to start without it; confirmed on the first Render deploy | HS4 | Closed |
+| I-09 | Timestamps shifted by the server's time-zone offset on Postgres | High | Time-zone-aware columns; regression test | HS3 | Closed |
+| I-10 | No schema migrations | Medium | Add a migration tool | HS5 | Open |
+| I-11 | Render Postgres not tested directly | Medium | Deployed, connected, and benchmarked | HS4 | Closed |
+| I-12 | Abandoned sessions accumulate | Low | Purge rule before peer testing | HS5 | Open |
+| I-13 | SQLite returns times without a zone marker | Low | All times written in UTC; Postgres stores the zone | — | Monitoring |
+| I-14 | Python patch versions differ (Codespace 3.11.16, Render and CI 3.11.17) | Low | Recorded in every evidence manifest | — | Monitoring |
+| I-16 | One gunicorn worker only, because startup table creation could race | Low | Remove the limit once migrations exist | HS5 | Open |
+| I-17 | Benchmark runs leave test sessions in the production database | Low | Purge before peer testing | HS5 | Open |
+| I-18 | Render silently ran on a temporary SQLite file because `DATABASE_URL` was missing; sessions were lost on each spin-down | High | Found by checking `/health` on the live site; variable set; production now refuses to start without it; test added | HS4 | Closed |
+| I-19 | Benchmark script rejected by the HTTPS CSRF check because it sent no Referer header | Low | Script now sends Referer like a browser; real users unaffected (confirmed in browser) | HS4 | Closed |

@@ -5,6 +5,28 @@ Format based on Keep a Changelog; versions follow `vMAJOR.MINOR.PATCH` (see docs
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-25
+
+Hard Stop 4 technical evidence release.
+
+### Added
+- Scoring engine: correct = 2, partial = 1, incorrect = 0; readiness bands Prepared (80%+), Developing (50–79%), Unprepared (below 50%); gaps ordered by timeline
+- After-action report page: readiness rating, decision review with rationale, recommended NIST controls grouped by implementation timeline
+- Error page when a session cannot be scored; saved responses are kept
+- CSRF protection on all forms; secure, HttpOnly, SameSite session cookies in production
+- Production refuses to start without `SECRET_KEY` or `DATABASE_URL`
+- Render deployment (gunicorn, one worker) with Render Postgres
+- Seven hand-computed known-answer cases; tests for the report, security, and configuration (52 tests)
+- `scripts/benchmark.py` and `scripts/collect_evidence.py`; dated evidence in `evidence/`
+- `docs/ai-usage-log.md` running AI usage log
+
+### Fixed
+- Render ran on a temporary SQLite file because `DATABASE_URL` was not set; the app now refuses to start without it in production
+- The benchmark script did not send a Referer header, so the HTTPS CSRF check rejected it; real browsers were never affected
+
+### Known issues
+See docs/risk-issue-log.md.
+
 ## [0.2.0] - 2026-10-11
 
 Hard Stop 3 early validation release.
