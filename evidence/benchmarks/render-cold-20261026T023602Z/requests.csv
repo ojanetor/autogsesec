@@ -1,0 +1,11 @@
+run,step,status,seconds
+1,start + decision 1,200,0.1912
+1,submit decision 1,200,0.148
+1,submit decision 2,200,0.2311
+1,submit decision 3 + score page,200,0.2373
+1,after-action report,200,0.0905
+2,start + decision 1,200,0.1874
+2,submit decision 1,200,0.167
+2,submit decision 2,200,0.1925
+2,submit decision 3 + score page,200,0.1766
+2,after-action report,200,0.0647
