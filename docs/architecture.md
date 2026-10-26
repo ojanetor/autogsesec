@@ -34,8 +34,8 @@ flowchart TB
 | Pages and styles | `templates/`, `static/` | Pages, report, error page, persistent disclaimer (FR-09) | Built |
 | Tests | `tests/` | 52 tests, run on SQLite and Postgres 16 on every pull request | Built |
 | Evidence tools | `scripts/benchmark.py`, `scripts/collect_evidence.py` | Latency benchmark; dated evidence records | Built |
-| Pre/post rating (FR-10) | — | Self-rated understanding before and after | Not started (Week 9) |
-| Facilitator view, export (FR-11, FR-12) | — | Optional features | Not started |
+| Before-and-after understanding rating | — | Participant rates understanding before and after the exercise | Scheduled Week 9; reported in Assignment 9 |
+| Facilitator view and results export | — | Facilitator overview of sessions; downloadable results | Scheduled Week 10; reported in Assignment 10 (Hard Stop 5) |
 
 ## Scoring and Report Flow
 

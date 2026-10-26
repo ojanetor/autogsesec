@@ -5,6 +5,10 @@ Format based on Keep a Changelog; versions follow `vMAJOR.MINOR.PATCH` (see docs
 
 ## [Unreleased]
 
+### Changed
+- AI usage log completed for Hard Stop 4 (task log, rejected suggestions, process slips)
+- Architecture status rows for planned features now show their scheduled week (full scope kept)
+
 ## [0.3.0] - 2026-10-25
 
 Hard Stop 4 technical evidence release.
