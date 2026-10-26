@@ -17,7 +17,7 @@
 
 | Variable | Used by | Default if unset | Where it is set |
 |----------|---------|------------------|-----------------|
-| `DATABASE_URL` | `config.py` | `sqlite:///autogsesec.db` (file in `instance/`, not committed) | Render dashboard: the Postgres **Internal Database URL** |
+| `DATABASE_URL` | `config.py` | Local: `sqlite:///autogsesec.db` (file in `instance/`, not committed). **In production the app refuses to start without it.** | Render dashboard: the Postgres **Internal Database URL** |
 | `SECRET_KEY` | `config.py` | Development placeholder. **In production the app refuses to start without it.** | Render dashboard (use "Generate") |
 | `RENDER` | `config.py` | Unset | Set to `true` automatically by Render; switches on production rules |
 | `APP_ENV` | `config.py` | Unset | Optional: `production` turns on production rules outside Render |
@@ -29,7 +29,7 @@
 
 ## Production Rules (when `RENDER=true` or `APP_ENV=production`)
 
-- `SECRET_KEY` must be set, or the app stops at startup.
+- `SECRET_KEY` and `DATABASE_URL` must both be set, or the app stops at startup.
 - Session cookies are marked `Secure` (HTTPS only), `HttpOnly`, and `SameSite=Lax`.
 - Every form post must carry a CSRF token (Flask-WTF); requests without one get HTTP 400.
 - The Flask debugger is never used; gunicorn serves the app.

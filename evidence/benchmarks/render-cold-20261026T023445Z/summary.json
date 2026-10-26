@@ -1,0 +1,52 @@
+{
+  "label": "render-cold",
+  "base_url": "https://autogsesec.onrender.com",
+  "utc_time": "20261026T023445Z",
+  "runs": 1,
+  "answers": [
+    "d",
+    "b",
+    "c"
+  ],
+  "warm_up": false,
+  "nfr01_limit_seconds": 3.0,
+  "nfr01_score_displays_under_limit": 1,
+  "nfr01_score_displays_total": 1,
+  "steps": {
+    "start + decision 1": {
+      "n": 1,
+      "min": 32.3806,
+      "median": 32.3806,
+      "p95": 32.3806,
+      "max": 32.3806
+    },
+    "submit decision 1": {
+      "n": 1,
+      "min": 0.1676,
+      "median": 0.1676,
+      "p95": 0.1676,
+      "max": 0.1676
+    },
+    "submit decision 2": {
+      "n": 1,
+      "min": 0.1776,
+      "median": 0.1776,
+      "p95": 0.1776,
+      "max": 0.1776
+    },
+    "submit decision 3 + score page": {
+      "n": 1,
+      "min": 0.1464,
+      "median": 0.1464,
+      "p95": 0.1464,
+      "max": 0.1464
+    },
+    "after-action report": {
+      "n": 1,
+      "min": 0.1003,
+      "median": 0.1003,
+      "p95": 0.1003,
+      "max": 0.1003
+    }
+  }
+}

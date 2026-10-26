@@ -1,0 +1,4 @@
+Mon Oct 26 02:43:06 UTC 2026
+POST without form token: 400
+Unknown scenario: 404
+Report without a session: 302

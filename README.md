@@ -35,15 +35,17 @@ AutoGSESec fills that gap.
 
 ---
 
-## Project Status — v0.2.0 (Hard Stop 3)
+## Project Status — v0.3.0 (Hard Stop 4)
+
+**Live:** https://autogsesec.onrender.com
 
 | Works now (tested) | Partial or not started |
 |--------------------|------------------------|
-| Scenario library, 3-step decision flow, session summary | Scoring engine and after-action report: placeholders (Hard Stop 4) |
-| Content loader with fail-closed validation | sc01 content is a draft; sc02 and sc03 not yet written |
-| Sessions and responses saved to a database (SQLite locally, Postgres-ready) | Render deployment and Render Postgres not yet tested |
-| `DATABASE_URL` configuration; Render-style Postgres URLs accepted | No schema migrations; no CSRF protection yet |
-| 17 automated tests, run on SQLite and Postgres 16 on every pull request | Before/after understanding rating (FR-10) not built |
+| sc01 end to end: decisions, deterministic score, after-action report | sc02 and sc03 not yet written; sc01 mapping not yet audited |
+| Responses stored in Render Postgres; data survives restarts | No schema migrations yet |
+| CSRF protection; production refuses to start without its secret key or database | Before/after understanding rating not built |
+| 52 automated tests on SQLite and Postgres 16; 7 of 7 known-answer cases match | Facilitator view and report export not built |
+| Live site: 20 of 20 score pages under 3 seconds (warm) | Peer usability testing not yet run |
 
 Known issues and risks: [docs/risk-issue-log.md](docs/risk-issue-log.md). Environment variables: [docs/environment.md](docs/environment.md). Release history: [CHANGELOG.md](CHANGELOG.md).
 
@@ -55,7 +57,7 @@ Known issues and risks: [docs/risk-issue-log.md](docs/risk-issue-log.md). Enviro
 - **Frontend:** HTML, CSS, vanilla JavaScript
 - **Content:** versioned JSON files in Git
 - **Database:** SQLAlchemy 2.1 — SQLite for development, Postgres 16 validated in CI (psycopg 3)
-- **Hosting:** Render.com free tier (planned)
+- **Hosting:** Render.com free tier with Render Postgres (live)
 - **Development:** GitHub Codespaces dev container; GitHub Actions for tests
 
 ---
@@ -94,7 +96,7 @@ Open `http://localhost:5000` in your browser. No environment variables are neede
 python -m pytest -v
 ```
 
-Expected result: **17 passed**. To run the same tests against Postgres, set `TEST_DATABASE_URL` (see [docs/environment.md](docs/environment.md)).
+Expected result: **52 passed**. To run the same tests against Postgres, set `TEST_DATABASE_URL` (see [docs/environment.md](docs/environment.md)).
 
 ### Inspect stored data
 
