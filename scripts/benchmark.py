@@ -6,8 +6,8 @@ Uses only the Python standard library.
 
 Usage:
     python scripts/benchmark.py --base-url http://127.0.0.1:5000 --runs 20 --label local
-    python scripts/benchmark.py --base-url https://<app>.onrender.com --runs 20 --label render-warm
-    python scripts/benchmark.py --base-url https://<app>.onrender.com --runs 1 --label render-cold --no-warmup
+    python scripts/benchmark.py --base-url https://autogsesec.onrender.com --runs 20 --label render-warm
+    python scripts/benchmark.py --base-url https://autogsesec.onrender.com --runs 1 --label render-cold --no-warmup
 
 Results are written to evidence/benchmarks/<label>-<UTC timestamp>/ as
 requests.csv (one row per request) and summary.json.
@@ -19,6 +19,7 @@ import json
 import re
 import statistics
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
@@ -30,13 +31,24 @@ NFR01_LIMIT_SECONDS = 3.0
 TOKEN = re.compile(r'name="csrf_token" value="([^"]+)"')
 
 
-def timed(opener, url, data=None):
+def timed(opener, url, data=None, referer=None):
+    """Time one request. Returns (seconds, status, html, final_url)."""
     body = urllib.parse.urlencode(data).encode() if data else None
+    request = urllib.request.Request(url, data=body)
+    if referer:
+        # Browsers send the page a form came from. Over HTTPS, Flask-WTF's CSRF
+        # check requires it, so the benchmark sends it too.
+        request.add_header("Referer", referer)
     start = time.perf_counter()
-    with opener.open(url, data=body, timeout=120) as response:
-        html = response.read().decode("utf-8", errors="replace")
-        status = response.status
-    return time.perf_counter() - start, status, html
+    try:
+        with opener.open(request, timeout=120) as response:
+            html = response.read().decode("utf-8", errors="replace")
+            status = response.status
+            final_url = response.geturl()
+    except urllib.error.HTTPError as error:
+        detail = error.read().decode("utf-8", errors="replace")[:300]
+        raise RuntimeError(f"HTTP {error.code} from {url}: {detail}") from None
+    return time.perf_counter() - start, status, html, final_url
 
 
 def one_exercise(base_url, run_number):
@@ -44,9 +56,11 @@ def one_exercise(base_url, run_number):
     jar = http.cookiejar.CookieJar()
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
     rows = []
+    page = {"url": None}
 
     def record(step, url, data=None):
-        seconds, status, html = timed(opener, url, data)
+        seconds, status, html, final_url = timed(opener, url, data, referer=page["url"])
+        page["url"] = final_url
         rows.append({"run": run_number, "step": step, "status": status, "seconds": round(seconds, 4)})
         return html
 
@@ -94,7 +108,7 @@ def main():
 
     if not args.no_warmup:
         opener = urllib.request.build_opener()
-        seconds, _, _ = timed(opener, f"{base_url}/health")
+        seconds, _, _, _ = timed(opener, f"{base_url}/health")
         print(f"warm-up /health: {seconds:.3f}s (not counted)")
 
     rows = []
@@ -136,3 +150,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
