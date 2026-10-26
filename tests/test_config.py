@@ -1,10 +1,14 @@
 """Tests for environment-variable configuration (T4)."""
+import pytest
+
 from app import app
 import config
 
 
 def test_default_is_local_sqlite(monkeypatch):
     monkeypatch.delenv("DATABASE_URL", raising=False)
+    monkeypatch.delenv("RENDER", raising=False)
+    monkeypatch.delenv("APP_ENV", raising=False)
     assert config.database_url() == "sqlite:///autogsesec.db"
 
 
@@ -22,3 +26,10 @@ def test_health_reports_database_engine():
     data = app.test_client().get("/health").get_json()
     assert data["database"] == "ok"
     assert data["database_engine"] in {"sqlite", "postgresql"}
+
+
+def test_production_refuses_to_start_without_database_url(monkeypatch):
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+    monkeypatch.setenv("RENDER", "true")
+    with pytest.raises(RuntimeError):
+        config.database_url()
