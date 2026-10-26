@@ -1,0 +1,67 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0 -- /workspaces/autogsesec/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /workspaces/autogsesec
+collecting ... collected 52 items
+
+tests/test_app.py::test_every_option_has_a_mapping PASSED                [  1%]
+tests/test_app.py::test_invalid_option_is_rejected PASSED                [  3%]
+tests/test_app.py::test_full_walkthrough_reaches_summary PASSED          [  5%]
+tests/test_config.py::test_default_is_local_sqlite PASSED                [  7%]
+tests/test_config.py::test_render_style_postgres_url_is_converted PASSED [  9%]
+tests/test_config.py::test_postgresql_url_is_converted PASSED            [ 11%]
+tests/test_config.py::test_health_reports_database_engine PASSED         [ 13%]
+tests/test_config.py::test_production_refuses_to_start_without_database_url PASSED [ 15%]
+tests/test_persistence.py::test_completed_walkthrough_is_saved PASSED    [ 17%]
+tests/test_persistence.py::test_resubmitting_a_decision_keeps_the_last_answer PASSED [ 19%]
+tests/test_persistence.py::test_invalid_option_is_not_saved PASSED       [ 21%]
+tests/test_persistence.py::test_abandoned_session_has_no_completion_time PASSED [ 23%]
+tests/test_persistence.py::test_schema_has_no_personal_data_columns PASSED [ 25%]
+tests/test_persistence.py::test_timestamps_record_the_correct_moment PASSED [ 26%]
+tests/test_report.py::test_known_answer_cases[K1] PASSED                 [ 28%]
+tests/test_report.py::test_known_answer_cases[K2] PASSED                 [ 30%]
+tests/test_report.py::test_known_answer_cases[K3] PASSED                 [ 32%]
+tests/test_report.py::test_known_answer_cases[K4] PASSED                 [ 34%]
+tests/test_report.py::test_known_answer_cases[K5] PASSED                 [ 36%]
+tests/test_report.py::test_known_answer_cases[K6] PASSED                 [ 38%]
+tests/test_report.py::test_known_answer_cases[K7] PASSED                 [ 40%]
+tests/test_report.py::test_every_recommended_control_has_a_name_and_family PASSED [ 42%]
+tests/test_report.py::test_report_is_identical_across_ten_runs PASSED    [ 44%]
+tests/test_report.py::test_report_page_shows_rating_controls_and_timelines PASSED [ 46%]
+tests/test_report.py::test_report_requires_a_finished_session PASSED     [ 48%]
+tests/test_report.py::test_scoring_failure_shows_error_and_keeps_responses PASSED [ 50%]
+tests/test_scoring.py::test_best_answers_score_100_percent PASSED        [ 51%]
+tests/test_scoring.py::test_worst_answers_score_zero_and_list_every_gap PASSED [ 53%]
+tests/test_scoring.py::test_gaps_are_ordered_immediate_first PASSED      [ 55%]
+tests/test_scoring.py::test_readiness_band_boundaries[6-Prepared] PASSED [ 57%]
+tests/test_scoring.py::test_readiness_band_boundaries[5-Prepared] PASSED [ 59%]
+tests/test_scoring.py::test_readiness_band_boundaries[4-Developing] PASSED [ 61%]
+tests/test_scoring.py::test_readiness_band_boundaries[3-Developing] PASSED [ 63%]
+tests/test_scoring.py::test_readiness_band_boundaries[2-Unprepared] PASSED [ 65%]
+tests/test_scoring.py::test_readiness_band_boundaries[0-Unprepared] PASSED [ 67%]
+tests/test_scoring.py::test_exact_boundary_is_not_lost_to_rounding PASSED [ 69%]
+tests/test_scoring.py::test_every_possible_answer_combination_scores_consistently PASSED [ 71%]
+tests/test_scoring.py::test_same_answers_give_identical_results_ten_times PASSED [ 73%]
+tests/test_scoring.py::test_missing_answer_is_refused PASSED             [ 75%]
+tests/test_scoring.py::test_unmapped_option_is_refused PASSED            [ 76%]
+tests/test_scoring.py::test_summary_page_shows_readiness PASSED          [ 78%]
+tests/test_scoring.py::test_validator_requires_a_timeline_for_wrong_answers PASSED [ 80%]
+tests/test_scoring.py::test_validator_requires_a_correct_option PASSED   [ 82%]
+tests/test_security.py::test_form_post_without_csrf_token_is_rejected PASSED [ 84%]
+tests/test_security.py::test_form_post_with_csrf_token_is_accepted PASSED [ 86%]
+tests/test_security.py::test_production_refuses_to_start_without_secret_key PASSED [ 88%]
+tests/test_security.py::test_development_uses_placeholder_key PASSED     [ 90%]
+tests/test_security.py::test_session_cookie_is_http_only_and_same_site PASSED [ 92%]
+tests/test_smoke.py::test_app_starts_and_loads_content PASSED            [ 94%]
+tests/test_smoke.py::test_health_endpoint_reports_ok PASSED              [ 96%]
+tests/test_smoke.py::test_home_page_shows_disclaimer PASSED              [ 98%]
+tests/test_smoke.py::test_planned_modules_are_importable PASSED          [100%]
+
+- generated xml file: /workspaces/autogsesec/evidence/runs/v0.3.0/tests-junit.xml -
+============================= slowest 5 durations ==============================
+0.03s call     tests/test_app.py::test_full_walkthrough_reaches_summary
+0.03s call     tests/test_app.py::test_invalid_option_is_rejected
+0.02s call     tests/test_report.py::test_report_page_shows_rating_controls_and_timelines
+0.01s call     tests/test_persistence.py::test_completed_walkthrough_is_saved
+0.01s call     tests/test_report.py::test_scoring_failure_shows_error_and_keeps_responses
+============================== 52 passed in 0.44s ==============================
