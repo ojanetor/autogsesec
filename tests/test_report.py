@@ -10,16 +10,29 @@ from engine.report import build_report
 from engine.scoring import ScoringError, score_session
 from models import Response
 
-KNOWN = json.loads((Path(__file__).parent / "data" / "known_answers_sc01.json").read_text())
+DATA_DIR = Path(__file__).parent / "data"
+KNOWN_FILES = sorted(DATA_DIR.glob("known_answers_*.json"))
+KNOWN_CASES = [
+    (known["scenario_id"], case)
+    for known in (json.loads(f.read_text()) for f in KNOWN_FILES)
+    for case in known["cases"]
+]
 SC01 = SCENARIOS["sc01"]
 
 
-@pytest.mark.parametrize("case", KNOWN["cases"], ids=[c["id"] for c in KNOWN["cases"]])
-def test_known_answer_cases(case):
+def test_every_scenario_has_known_answer_cases():
+    covered = {scenario_id for scenario_id, _ in KNOWN_CASES}
+    assert covered == set(SCENARIOS)
+
+
+@pytest.mark.parametrize("scenario_id, case", KNOWN_CASES,
+                         ids=[f"{sid}-{c['id']}" for sid, c in KNOWN_CASES])
+def test_known_answer_cases(scenario_id, case):
     """Engine output must equal the hand-computed expected values."""
+    scenario = SCENARIOS[scenario_id]
     expected = case["expected"]
-    score = score_session(SC01, case["answers"])
-    report = build_report(SC01, score, CONTROL_NAMES)
+    score = score_session(scenario, case["answers"])
+    report = build_report(scenario, score, CONTROL_NAMES)
 
     assert score["earned"] == expected["earned"]
     assert score["percent"] == expected["percent"]
@@ -32,13 +45,15 @@ def test_known_answer_cases(case):
     assert recommended == expected["recommended"]
 
 
-def test_every_recommended_control_has_a_name_and_family():
-    for answers in ({"dp1": "a", "dp2": "a", "dp3": "a"}, {"dp1": "b", "dp2": "c", "dp3": "c"}):
-        report = build_report(SC01, score_session(SC01, answers), CONTROL_NAMES)
-        for group in report["recommendations"]:
-            for control in group["controls"]:
-                assert control["name"] != "Unknown control"
-                assert control["family"]
+@pytest.mark.parametrize("scenario_id", sorted(SCENARIOS))
+def test_every_mapped_control_has_a_name_and_family(scenario_id):
+    """Every control any option can recommend has a catalog name and a known family."""
+    from engine.report import CONTROL_FAMILIES
+    for point_map in SCENARIOS[scenario_id]["mapping"].values():
+        for entry in point_map.values():
+            for control_id in entry["nist_controls"]:
+                assert control_id in CONTROL_NAMES
+                assert control_id.split("-")[0] in CONTROL_FAMILIES
 
 
 def test_report_is_identical_across_ten_runs():

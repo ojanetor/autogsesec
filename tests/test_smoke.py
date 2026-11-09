@@ -2,8 +2,17 @@
 from app import app, SCENARIOS
 
 
-def test_app_starts_and_loads_content():
-    assert len(SCENARIOS) >= 1
+def test_app_starts_and_loads_all_three_scenarios():
+    assert sorted(SCENARIOS) == ["sc01", "sc02", "sc03"]
+
+
+def test_each_module_name_matches_its_attack_tactic():
+    """A scenario's module label must be the name of the ATT&CK for ICS tactic it maps to."""
+    import json
+    from engine.content import DATA_DIR
+    tactics = json.loads((DATA_DIR / "frameworks.json").read_text())["attack_ics"]["tactics"]
+    for scenario in SCENARIOS.values():
+        assert scenario["module"] == tactics[scenario["attack_tactic"]]
 
 
 def test_health_endpoint_reports_ok():

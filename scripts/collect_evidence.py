@@ -35,35 +35,39 @@ def known_answer_table():
 
     scenarios = load_all()
     names = load_control_names()
-    known = json.loads((ROOT / "tests" / "data" / "known_answers_sc01.json").read_text())
-    scenario = scenarios[known["scenario_id"]]
-
-    lines = [
-        "| Case | Answers | Expected | Actual | Match |",
-        "|---|---|---|---|---|",
-    ]
-    matches = 0
-    for case in known["cases"]:
-        exp = case["expected"]
-        score = score_session(scenario, case["answers"])
-        report = build_report(scenario, score, names)
-        actual = {
-            "earned": score["earned"],
-            "percent": score["percent"],
-            "readiness": report["readiness"],
-            "gap_order": [g["decision_point_id"] for g in score["gaps"]],
-            "recommended": {g["timeline"]: [c["id"] for c in g["controls"]]
-                            for g in report["recommendations"]},
-        }
-        ok = all(actual[k] == exp[k] for k in exp)
-        matches += ok
-        answers = ", ".join(f"{k}={v}" for k, v in case["answers"].items())
-        lines.append(
-            f"| {case['id']} | {answers} | {exp['earned']}/6, {exp['percent']}%, {exp['readiness']} "
-            f"| {actual['earned']}/6, {actual['percent']}%, {actual['readiness']} | {'yes' if ok else 'NO'} |"
-        )
-    lines.append("")
-    lines.append(f"{matches} of {len(known['cases'])} known-answer cases match "
+    lines = []
+    total = matches = 0
+    for path in sorted((ROOT / "tests" / "data").glob("known_answers_*.json")):
+        known = json.loads(path.read_text())
+        scenario = scenarios[known["scenario_id"]]
+        lines += [
+            f"### {scenario['id']}: {scenario['title']}",
+            "",
+            "| Case | Answers | Expected | Actual | Match |",
+            "|---|---|---|---|---|",
+        ]
+        for case in known["cases"]:
+            exp = case["expected"]
+            score = score_session(scenario, case["answers"])
+            report = build_report(scenario, score, names)
+            actual = {
+                "earned": score["earned"],
+                "percent": score["percent"],
+                "readiness": report["readiness"],
+                "gap_order": [g["decision_point_id"] for g in score["gaps"]],
+                "recommended": {g["timeline"]: [c["id"] for c in g["controls"]]
+                                for g in report["recommendations"]},
+            }
+            ok = all(actual[k] == exp[k] for k in exp)
+            matches += ok
+            total += 1
+            answers = ", ".join(f"{k}={v}" for k, v in case["answers"].items())
+            lines.append(
+                f"| {case['id']} | {answers} | {exp['earned']}/6, {exp['percent']}%, {exp['readiness']} "
+                f"| {actual['earned']}/6, {actual['percent']}%, {actual['readiness']} | {'yes' if ok else 'NO'} |"
+            )
+        lines.append("")
+    lines.append(f"{matches} of {total} known-answer cases match "
                  "(score, readiness, gap order and recommended controls compared).")
     return "\n".join(lines)
 
@@ -113,4 +117,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
     

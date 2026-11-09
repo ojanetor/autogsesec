@@ -8,13 +8,14 @@ from engine import content
 from engine.scoring import POINTS, ScoringError, readiness_for, score_session
 
 SC01 = SCENARIOS["sc01"]
-POINT_IDS = [p["id"] for p in SC01["decision_points"]]
+ALL_SCENARIOS = sorted(SCENARIOS)
 
 
 def all_answer_combinations(scenario):
+    point_ids = [p["id"] for p in scenario["decision_points"]]
     choices = [[o["id"] for o in p["options"]] for p in scenario["decision_points"]]
     for combo in product(*choices):
-        yield dict(zip(POINT_IDS, combo))
+        yield dict(zip(point_ids, combo))
 
 
 def test_best_answers_score_100_percent():
@@ -50,13 +51,16 @@ def test_exact_boundary_is_not_lost_to_rounding():
     assert readiness_for(1, 2) == "Developing"    # exactly 50%
 
 
-def test_every_possible_answer_combination_scores_consistently():
-    """All 4 x 4 x 4 = 64 combinations: totals, gaps and bands agree with the rubric."""
-    combinations = list(all_answer_combinations(SC01))
+@pytest.mark.parametrize("scenario_id", ALL_SCENARIOS)
+def test_every_possible_answer_combination_scores_consistently(scenario_id):
+    """All 4 x 4 x 4 = 64 combinations per scenario: totals, gaps and bands agree with the rubric."""
+    scenario = SCENARIOS[scenario_id]
+    point_ids = [p["id"] for p in scenario["decision_points"]]
+    combinations = list(all_answer_combinations(scenario))
     assert len(combinations) == 64
     for answers in combinations:
-        result = score_session(SC01, answers)
-        ratings = [SC01["mapping"][pid][answers[pid]]["rating"] for pid in POINT_IDS]
+        result = score_session(scenario, answers)
+        ratings = [scenario["mapping"][pid][answers[pid]]["rating"] for pid in point_ids]
         assert result["earned"] == sum(POINTS[r] for r in ratings)
         assert len(result["gaps"]) == sum(r != "correct" for r in ratings)
         assert result["readiness"] == readiness_for(result["earned"], result["possible"])
@@ -64,10 +68,12 @@ def test_every_possible_answer_combination_scores_consistently():
             assert gap["nist_controls"], "every gap must name a NIST control"
 
 
-def test_same_answers_give_identical_results_ten_times():
+@pytest.mark.parametrize("scenario_id", ALL_SCENARIOS)
+def test_same_answers_give_identical_results_ten_times(scenario_id):
     """NFR-06: identical input scored 10 times gives 100% identical output."""
+    scenario = SCENARIOS[scenario_id]
     answers = {"dp1": "b", "dp2": "c", "dp3": "a"}
-    results = [score_session(SC01, answers) for _ in range(10)]
+    results = [score_session(scenario, answers) for _ in range(10)]
     assert all(r == results[0] for r in results)
 
 

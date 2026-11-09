@@ -1,0 +1,29 @@
+{
+  "scenario_id": "sc03",
+  "mapping_status": "DRAFT - verify every entry against NIST SP 800-82 Rev. 3 (NFR-07)",
+  "framework_versions": {
+    "attack_ics": "v19.2",
+    "nist_sp800_82": "Rev. 3"
+  },
+  "attack_tactic": "TA0105",
+  "decision_points": {
+    "dp1": {
+      "a": {"rating": "incorrect", "nist_controls": ["SI-4", "IR-4"], "timeline": "immediate", "rationale": "Vehicles are moving with no one watching; waiting accepts a safety risk."},
+      "b": {"rating": "correct", "nist_controls": ["IR-4", "CP-2"], "timeline": null, "rationale": "Removes the hazard first and replaces the lost view with direct observation, as a contingency plan should."},
+      "c": {"rating": "incorrect", "nist_controls": ["IR-4"], "timeline": "immediate", "rationale": "Treats a safety event as a routine IT fault while vehicles keep moving unwatched."},
+      "d": {"rating": "partial", "nist_controls": ["IR-4"], "timeline": "short_term", "rationale": "Reduces the worst risk, but other vehicles still move with no one watching."}
+    },
+    "dp2": {
+      "a": {"rating": "partial", "nist_controls": ["CP-10"], "timeline": "short_term", "rationale": "Restores service but treats an unexplained change as routine."},
+      "b": {"rating": "correct", "nist_controls": ["IR-4", "AU-6", "CM-3"], "timeline": null, "rationale": "Keeps the evidence, finds out who made the change, and recovers safely."},
+      "c": {"rating": "incorrect", "nist_controls": ["IR-6"], "timeline": "immediate", "rationale": "Incident handling and reporting are the operator's job too, not only the vendor's."},
+      "d": {"rating": "incorrect", "nist_controls": ["IR-4"], "timeline": "immediate", "rationale": "Rebuilding first destroys the evidence of who made the change."}
+    },
+    "dp3": {
+      "a": {"rating": "incorrect", "nist_controls": ["CP-10"], "timeline": "immediate", "rationale": "A working dashboard does not show that the cause is gone; recovery needs verification."},
+      "b": {"rating": "correct", "nist_controls": ["CP-2", "CP-4", "CP-10"], "timeline": null, "rationale": "Controlled recovery, and the contingency plan is tested before it is needed again."},
+      "c": {"rating": "partial", "nist_controls": ["CP-10"], "timeline": "long_term", "rationale": "Safe but not proportionate; recovery planning should allow controlled restoration."},
+      "d": {"rating": "incorrect", "nist_controls": ["CP-2"], "timeline": "short_term", "rationale": "More screens do not help when the monitoring data itself fails."}
+    }
+  }
+}

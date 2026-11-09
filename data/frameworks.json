@@ -13,11 +13,20 @@
     "name": "NIST SP 800-82 Rev. 3 (OT overlay of SP 800-53 Rev. 5 controls)",
     "version": "Rev. 3",
     "controls": {
+      "AC-2": "Account Management",
+      "AC-6": "Least Privilege",
+      "AC-17": "Remote Access",
       "AT-2": "Literacy Training and Awareness",
+      "AT-3": "Role-Based Training",
+      "AU-6": "Audit Record Review, Analysis, and Reporting",
+      "CM-3": "Configuration Change Control",
+      "CP-2": "Contingency Plan",
+      "CP-4": "Contingency Plan Testing",
       "CP-10": "System Recovery and Reconstitution",
       "IR-4": "Incident Handling",
       "IR-6": "Incident Reporting",
       "IR-8": "Incident Response Plan",
+      "PS-4": "Personnel Termination",
       "SI-4": "System Monitoring"
     }
   }
