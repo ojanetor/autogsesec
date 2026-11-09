@@ -5,9 +5,22 @@ Format based on Keep a Changelog; versions follow `vMAJOR.MINOR.PATCH` (see docs
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-09
+
+Three-scenario release.
+
+### Added
+- Initial Access scenario "The Helpful Caller" (sc02) and Impact scenario "Dark Screens" (sc03), with draft rubric mappings
+- Nine NIST SP 800-53 Rev. 5 controls in `data/frameworks.json`: AC-2, AC-6, AC-17, AT-3, AU-6, CM-3, CP-2, CP-4, PS-4
+- 14 hand-computed known-answer cases for sc02 and sc03 (21 in total)
+- Tests cover all three scenarios: every answer path (192), determinism, walkthrough to report, module-to-tactic check, file-naming check (78 tests)
+
 ### Changed
-- AI usage log completed for Hard Stop 4 (task log, rejected suggestions, process slips)
-- Architecture status rows for planned features now show their scheduled week (full scope kept)
+- `scripts/collect_evidence.py` reports known answers for every scenario
+- AI usage log completed for Hard Stop 4; architecture rows show scheduled weeks (full scope kept)
+
+### Fixed
+- Four content files had been saved with " copy" in their names (sc01 and sc02, in both folders). All tests still passed because content is loaded by the id inside each file; renamed, and a test now enforces the naming convention
 
 ## [0.3.0] - 2026-10-25
 
