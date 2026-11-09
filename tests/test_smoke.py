@@ -31,3 +31,13 @@ def test_planned_modules_are_importable():
     from engine import report, scoring
     assert callable(scoring.score_session)
     assert callable(report.build_report)
+
+def test_content_file_names_follow_the_naming_convention():
+    """docs/conventions.md: <id>_<short_name>.json, same name in both folders, no spaces."""
+    import re
+    from engine.content import DATA_DIR
+    scenario_files = sorted(p.name for p in (DATA_DIR / "scenarios").glob("*.json"))
+    mapping_files = sorted(p.name for p in (DATA_DIR / "mappings").glob("*.json"))
+    assert scenario_files == mapping_files
+    for name in scenario_files:
+        assert re.fullmatch(r"sc\d{2}_[a-z0-9_]+\.json", name), name
