@@ -41,3 +41,20 @@ def test_content_file_names_follow_the_naming_convention():
     assert scenario_files == mapping_files
     for name in scenario_files:
         assert re.fullmatch(r"sc\d{2}_[a-z0-9_]+\.json", name), name
+
+def test_unknown_page_shows_friendly_404():
+    response = app.test_client().get("/scenario/zz99/start")
+    assert response.status_code == 404
+    assert "Page not found" in response.get_data(as_text=True)
+
+
+def test_unexpected_error_shows_friendly_500(monkeypatch):
+    import app as app_module
+
+    def broken(*args, **kwargs):
+        raise RuntimeError("simulated failure")
+
+    monkeypatch.setattr(app_module, "current_exercise", broken)
+    response = app.test_client().get("/scenario/sc01/summary")
+    assert response.status_code == 500
+    assert "Something went wrong" in response.get_data(as_text=True)        

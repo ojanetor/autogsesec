@@ -3,7 +3,7 @@ import sys
 from importlib.metadata import version
 
 from flask import Flask, abort, jsonify, redirect, render_template, request, session, url_for
-from flask_wtf.csrf import CSRFProtect
+from flask_wtf.csrf import CSRFError, CSRFProtect
 
 from config import database_url, is_production, secret_key
 from engine.content import load_all, load_control_names
@@ -196,5 +196,34 @@ def report(scenario_id):
     return render_template("report.html", scenario=scenario, report=aar, exercise=exercise)
 
 
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template(
+        "error.html",
+        heading="Page not found",
+        message="That page or scenario does not exist. Choose a scenario from the library.",
+    ), 404
+
+
+@app.errorhandler(CSRFError)
+def form_token_rejected(error):
+    return render_template(
+        "error.html",
+        heading="This form has expired",
+        message="The form's security token was missing or expired, so nothing was saved "
+                "from this request. Start the scenario again from the library.",
+    ), 400
+
+
+@app.errorhandler(500)
+def server_error(error):
+    return render_template(
+        "error.html",
+        heading="Something went wrong",
+        message="The server hit an unexpected error. Any answers already submitted are saved.",
+    ), 500
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    # The interactive debugger is off unless explicitly requested with FLASK_DEBUG=1.
+    app.run(debug=os.environ.get("FLASK_DEBUG") == "1")

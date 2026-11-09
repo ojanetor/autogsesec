@@ -1,18 +1,41 @@
-# Evidence Index — AutoGSESec v0.3.0
+# Evidence Index — AutoGSESec v0.5.0
 
-Every claim in the Hard Stop 4 package maps to a dated file in `evidence/`. Times are UTC.
+Every claim in the project reports maps to a file in `evidence/`. Times are UTC. Each run folder has a `manifest.json` with the exact commit, Python version, and package list.
+
+## Current release (v0.5.0, Hard Stop 5)
 
 | Criterion | Threshold | Evidence | Result |
 |---|---|---|---|
-| Scores and reports match hand-computed answers (FR-04, FR-07, FR-08) | 7 of 7 cases match | `evidence/runs/v0.3.0-codespace/known_answers.md` | PASS |
-| Every possible sc01 answer path scores consistently (FR-04) | 64 of 64 paths | `evidence/runs/v0.3.0-codespace/tests.txt` (test_every_possible_answer_combination_scores_consistently) | PASS |
-| Same input gives identical score and report (NFR-06) | 10 of 10 runs identical | `evidence/runs/v0.3.0-codespace/tests.txt` | PASS |
-| Score page under 3 s, local (NFR-01) | 20 of 20 | `evidence/benchmarks/codespace-local-20261019T015148Z/summary.json` | PASS (median 0.022 s) |
-| Score page under 3 s, live and warm (NFR-01) | 20 of 20 | `evidence/benchmarks/render-warm-20261026T013515Z/summary.json` | PASS (median 0.164 s, max 0.313 s) |
-| Score page under 3 s, live after a cold start (NFR-01) | Score page under 3 s | `evidence/benchmarks/render-cold-20261026T023445Z/` and `evidence/benchmarks/render-cold-20261026T030137Z/` | PASS for the score page (0.146 s and 0.181 s); **the first page took 32.4 s in both cold starts**, a limitation not covered by the requirement |
-| Runs labeled "render-cold" that were not cold | — | `render-cold-20261026T021107Z` (ran two minutes after a merge redeployed the site, so it was already awake), `render-cold-20261026T023602Z` (ran one minute after a cold start) | Kept and labeled; excluded from cold-start analysis |
+| Clean-environment reproducibility: README followed from a brand-new Codespace | All tests pass; known answers match; no undocumented steps | `evidence/runs/v0.5.0-clean-codespace/`; `docs/reproducibility.md` | [fill after run] |
+| Scores and reports match hand-computed answers, all three scenarios (FR-04, FR-07, FR-08) | 21 of 21 | `evidence/runs/v0.5.0-clean-codespace/known_answers.md` | [fill] |
+| Every answer path scores consistently (FR-04) | 192 of 192 (64 per scenario) | `evidence/runs/v0.5.0-clean-codespace/tests.txt` | [fill] |
+| Same input gives identical score and report (NFR-06) | 10 of 10, each scenario | same `tests.txt` | [fill] |
+| Hardening: friendly error pages, debugger off by default, session clean-up, file-naming check | Tests pass | same `tests.txt` (`test_smoke.py`, `test_security.py`, `test_maintenance.py`) | [fill] |
+| Score page under 3 s, live and warm, after v0.5.0 deploy (NFR-01) | 20 of 20 | `evidence/benchmarks/render-warm-<UTC time>/` | [fill] |
+
+## v0.4.0 (three scenarios)
+
+| Criterion | Threshold | Evidence | Result |
+|---|---|---|---|
+| Known answers, all three scenarios | 21 of 21 | `evidence/runs/v0.4.0/known_answers.md` | PASS |
+| All tests (78) | All pass | `evidence/runs/v0.4.0/tests.txt` | PASS (Python 3.11.16) |
+| Random-guessing baseline | Reference | `evidence/runs/v0.4.0/score_distribution.txt` | Prepared on 6.2%, 7.8%, 6.2% of paths |
+
+## v0.3.0 (Hard Stop 4)
+
+| Criterion | Threshold | Evidence | Result |
+|---|---|---|---|
+| Known answers, sc01 | 7 of 7 | `evidence/runs/v0.3.0/known_answers.md` | PASS |
+| Score page under 3 s, local | 20 of 20 | `evidence/benchmarks/codespace-local-20261019T015148Z/` | PASS (median 0.022 s) |
+| Score page under 3 s, live and warm | 20 of 20 | `evidence/benchmarks/render-warm-20261026T013515Z/` | PASS (median 0.164 s, max 0.313 s) |
+| Score page under 3 s, live after a cold start | Score page under 3 s | `evidence/benchmarks/render-cold-20261026T023445Z/`, `render-cold-20261026T030137Z/` | PASS for the score page (0.146 s, 0.181 s); **first page 32.4 s** both times (limitation) |
+| Runs labeled "render-cold" that were not cold | — | `render-cold-20261026T021107Z` (two minutes after a redeploy), `render-cold-20261026T023602Z` (one minute after a cold start) | Kept and labeled; excluded |
 | Live site rejects bad requests (NFR-08) | 400, 404, 302 | `evidence/benchmarks/render-probes-20261026.txt` | PASS |
-| Invalid input never stored; no personal data (NFR-08, NFR-09) | All tests pass | `evidence/runs/v0.3.0-codespace/tests.txt` | PASS |
-| Production refuses to start without secret key or database | Startup stops with a clear error | Configuration and security tests; Render deploy log (first deploy) | PASS |
-| Rubric validity (NFR-07) | 30% or more of entries independently audited | — | NOT YET (Week 9) |
-| Usability, usefulness, availability (NFR-02, NFR-03, NFR-05) | Peer sessions | — | NOT YET (Week 10) |
+| Production refuses to start without secret key or database | Clear startup error | configuration and security tests; first Render deploy | PASS |
+
+## Not yet demonstrated
+
+| Criterion | Threshold | Status |
+|---|---|---|
+| Rubric validity (NFR-07) | All 36 entries cite a verifiable control; 30% or more independently checked | Audit in progress |
+| Usability, usefulness, availability (NFR-02, NFR-03, NFR-05) | 80% unassisted completion; usefulness 4.0/5 or more; 95% uptime | Peer testing scheduled after the remaining features |

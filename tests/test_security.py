@@ -19,6 +19,7 @@ def test_form_post_without_csrf_token_is_rejected(csrf_on):
     client.get("/scenario/sc01/start")
     response = client.post("/scenario/sc01/decision/1", data={"option_id": "d"})
     assert response.status_code == 400
+    assert "This form has expired" in response.get_data(as_text=True)
 
 
 def test_form_post_with_csrf_token_is_accepted(csrf_on):
@@ -48,3 +49,10 @@ def test_development_uses_placeholder_key(monkeypatch):
 def test_session_cookie_is_http_only_and_same_site():
     assert app.config["SESSION_COOKIE_HTTPONLY"] is True
     assert app.config["SESSION_COOKIE_SAMESITE"] == "Lax"
+
+def test_direct_run_keeps_the_debugger_off_by_default():
+    """app.py starts Flask's debugger only when FLASK_DEBUG=1 is set explicitly."""
+    from pathlib import Path
+    source = (Path(__file__).resolve().parent.parent / "app.py").read_text()
+    assert 'app.run(debug=os.environ.get("FLASK_DEBUG") == "1")' in source
+    assert "app.run(debug=True)" not in source    

@@ -1,13 +1,14 @@
 """Latency benchmark for NFR-01 (score display in under 3 seconds).
 
-Plays complete sc01 exercises against a running AutoGSESec server, exactly as
-a browser would (cookies and CSRF tokens included), and times every request.
-Uses only the Python standard library.
+Plays complete exercises against a running AutoGSESec server, exactly as a
+browser would (cookies and CSRF tokens included), and times every request.
+Uses only the Python standard library. Defaults: scenario sc01, answers d,b,c.
 
 Usage:
     python scripts/benchmark.py --base-url http://127.0.0.1:5000 --runs 20 --label local
     python scripts/benchmark.py --base-url https://autogsesec.onrender.com --runs 20 --label render-warm
     python scripts/benchmark.py --base-url https://autogsesec.onrender.com --runs 1 --label render-cold --no-warmup
+    python scripts/benchmark.py --base-url http://127.0.0.1:5000 --runs 20 --label local-sc02 --scenario sc02 --answers c,a,c
 
 Results are written to evidence/benchmarks/<label>-<UTC timestamp>/ as
 requests.csv (one row per request) and summary.json.
@@ -26,7 +27,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-ANSWERS = ["d", "b", "c"]  # a fixed, mixed path: correct, correct, partial
+DEFAULT_SCENARIO = "sc01"
+DEFAULT_ANSWERS = "d,b,c"  # for sc01 a fixed, mixed path: correct, correct, partial
 NFR01_LIMIT_SECONDS = 3.0
 TOKEN = re.compile(r'name="csrf_token" value="([^"]+)"')
 
@@ -51,7 +53,7 @@ def timed(opener, url, data=None, referer=None):
     return time.perf_counter() - start, status, html, final_url
 
 
-def one_exercise(base_url, run_number):
+def one_exercise(base_url, run_number, scenario_id, answers):
     """Run one full exercise in a fresh browser-like session; return request rows."""
     jar = http.cookiejar.CookieJar()
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
@@ -64,17 +66,17 @@ def one_exercise(base_url, run_number):
         rows.append({"run": run_number, "step": step, "status": status, "seconds": round(seconds, 4)})
         return html
 
-    html = record("start + decision 1", f"{base_url}/scenario/sc01/start")
-    for number, choice in enumerate(ANSWERS, start=1):
+    html = record("start + decision 1", f"{base_url}/scenario/{scenario_id}/start")
+    for number, choice in enumerate(answers, start=1):
         match = TOKEN.search(html)
         if match is None:
             raise RuntimeError(f"run {run_number}: no CSRF token on decision {number} page")
-        step = "submit decision 3 + score page" if number == len(ANSWERS) else f"submit decision {number}"
-        html = record(step, f"{base_url}/scenario/sc01/decision/{number}",
+        step = "submit decision 3 + score page" if number == len(answers) else f"submit decision {number}"
+        html = record(step, f"{base_url}/scenario/{scenario_id}/decision/{number}",
                       {"option_id": choice, "csrf_token": match.group(1)})
     if "Readiness" not in html:
         raise RuntimeError(f"run {run_number}: score page did not show a readiness rating")
-    record("after-action report", f"{base_url}/scenario/sc01/report")
+    record("after-action report", f"{base_url}/scenario/{scenario_id}/report")
     return rows
 
 
@@ -103,8 +105,14 @@ def main():
     parser.add_argument("--label", required=True)
     parser.add_argument("--no-warmup", action="store_true",
                         help="skip the warm-up request (use when measuring a cold start)")
+    parser.add_argument("--scenario", default=DEFAULT_SCENARIO, help="scenario id, e.g. sc02")
+    parser.add_argument("--answers", default=DEFAULT_ANSWERS,
+                        help="comma-separated option ids, one per decision, e.g. c,a,c")
     args = parser.parse_args()
     base_url = args.base_url.rstrip("/")
+    answers = [a.strip() for a in args.answers.split(",") if a.strip()]
+    if len(answers) != 3:
+        parser.error("--answers needs exactly three option ids, e.g. d,b,c")
 
     if not args.no_warmup:
         opener = urllib.request.build_opener()
@@ -113,7 +121,7 @@ def main():
 
     rows = []
     for run in range(1, args.runs + 1):
-        rows.extend(one_exercise(base_url, run))
+        rows.extend(one_exercise(base_url, run, args.scenario, answers))
         print(f"run {run}/{args.runs} done")
 
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -131,7 +139,8 @@ def main():
         "base_url": base_url,
         "utc_time": stamp,
         "runs": args.runs,
-        "answers": ANSWERS,
+        "scenario": args.scenario,
+        "answers": answers,
         "warm_up": not args.no_warmup,
         "nfr01_limit_seconds": NFR01_LIMIT_SECONDS,
         "nfr01_score_displays_under_limit": sum(t < NFR01_LIMIT_SECONDS for t in score_times),
@@ -150,4 +159,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
     
