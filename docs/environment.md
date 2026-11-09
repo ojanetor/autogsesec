@@ -15,6 +15,8 @@
 
 ## Environment Variables
 
+   Every variable is also listed, with safe placeholders, in [`.env.example`](../.env.example).
+
 | Variable | Used by | Default if unset | Where it is set |
 |----------|---------|------------------|-----------------|
 | `DATABASE_URL` | `config.py` | Local: `sqlite:///autogsesec.db` (file in `instance/`, not committed). **In production the app refuses to start without it.** | Render dashboard: the Postgres **Internal Database URL** |
@@ -22,6 +24,7 @@
 | `RENDER` | `config.py` | Unset | Set to `true` automatically by Render; switches on production rules |
 | `APP_ENV` | `config.py` | Unset | Optional: `production` turns on production rules outside Render |
 | `PORT` | gunicorn | 8000 | Set automatically by Render |
+| `FLASK_DEBUG` | `app.py` (`python app.py` only) | Unset: debugger off | Set to `1` only on your own machine when debugging |
 | `TEST_DATABASE_URL` | `tests/conftest.py` | `sqlite://` (in-memory) | GitHub Actions Postgres job |
 | `PGTZ` | psycopg / libpq | Database server's time zone | GitHub Actions Postgres job (`America/New_York`) |
 
@@ -44,7 +47,7 @@
 | Health check path | `/health` |
 | Database | Render Postgres, Free (expires 30 days after creation) |
 
-One worker is used on purpose: tables are created at startup with `db.create_all()`, and two workers starting together could race to create them (issue I-16). Migrations (planned for Hard Stop 5) remove this limit.
+One worker is used on purpose: tables are created at startup with `db.create_all()`, and two workers starting together could race to create them (issue I-16). Migrations (added with the first schema change, issue I-10) remove this limit.
 
 ## Databases Validated
 

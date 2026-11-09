@@ -5,6 +5,24 @@ Format based on Keep a Changelog; versions follow `vMAJOR.MINOR.PATCH` (see docs
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-09
+
+Hard Stop 5: hardening and reproducibility release.
+
+### Added
+- README rewritten for a new user: prerequisites, setup, run, expected outputs, evidence reproduction, configuration, data provenance and redistribution, troubleshooting
+- `.env.example` listing every environment variable with safe placeholders
+- `docs/runbook.md`: deployment pathway diagram, configuration map, deploy, warm-up, data clean-up, database recreation, release steps
+- `docs/reproducibility.md`: clean-environment runs and friction log
+- `maintenance.py` and `scripts/purge_sessions.py`: find and remove abandoned sessions or test data; dry run by default (issues I-12, I-17)
+- Friendly error pages for unknown pages (404), expired forms (CSRF, 400), and unexpected errors (500)
+- `scripts/benchmark.py --scenario --answers` to time any scenario
+- 11 new tests (89 in total)
+
+### Changed
+- `python app.py` no longer starts Flask's debugger unless `FLASK_DEBUG=1` is set
+- Evidence index, architecture, environment notes, and risk log updated for v0.5.0
+
 ## [0.4.0] - 2026-11-09
 
 Three-scenario release.

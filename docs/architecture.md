@@ -1,6 +1,6 @@
 # System Architecture — AutoGSESec
 
-Version: v0.3.0 (Hard Stop 4). Design decisions are documented in the Hard Stop 2 Design Review Package.
+Version: v0.5.0 (Hard Stop 5). Design decisions are documented in the Hard Stop 2 Design Review Package.
 
 ## Overview
 
@@ -23,19 +23,20 @@ flowchart TB
 
 ## Components and Status
 
-| Component | File | Responsibility | Status at v0.3.0 |
+| Component | File | Responsibility | Status at v0.5.0 |
 |-----------|------|----------------|------------------|
-| Delivery engine | `app.py` | Routes, session state, input validation, CSRF | Built |
+| Delivery engine | `app.py` | Routes, session state, input validation, CSRF, friendly 404 / expired-form / 500 pages | Built |
 | Content loader | `engine/content.py` | Loads JSON; refuses to start on missing or unknown mappings | Built |
-| Scoring engine | `engine/scoring.py` | Rule-based scoring, readiness rating, gap ordering | Built; 7 known-answer cases, 64-path test |
+| Scoring engine | `engine/scoring.py` | Rule-based scoring, readiness rating, gap ordering | Built; 21 known-answer cases, 192-path test (3 scenarios) |
 | After-action report | `engine/report.py` | Decision review, recommended controls grouped by timeline | Built |
 | Configuration | `config.py` | Database and secret key from environment; production refuses to start without either | Built |
 | Persistence | `models.py` | Sessions and responses via SQLAlchemy | Built; Render Postgres |
 | Pages and styles | `templates/`, `static/` | Pages, report, error page, persistent disclaimer (FR-09) | Built |
-| Tests | `tests/` | 52 tests, run on SQLite and Postgres 16 on every pull request | Built |
-| Evidence tools | `scripts/benchmark.py`, `scripts/collect_evidence.py` | Latency benchmark; dated evidence records | Built |
-| Before-and-after understanding rating | — | Participant rates understanding before and after the exercise | Scheduled Week 9; reported in Assignment 9 |
-| Facilitator view and results export | — | Facilitator overview of sessions; downloadable results | Scheduled Week 10; reported in Assignment 10 (Hard Stop 5) |
+| Tests | `tests/` | 89 tests, run on SQLite and Postgres 16 on every pull request | Built |
+| Evidence tools | `scripts/benchmark.py`, `scripts/collect_evidence.py`, `scripts/score_distribution.py` | Latency benchmark (any scenario); dated evidence records; score spread | Built |
+| Housekeeping | `maintenance.py`, `scripts/purge_sessions.py` | Find and remove abandoned sessions or test data (dry run by default) | Built |
+| Before-and-after understanding rating | — | Participant rates understanding before and after the exercise | Scheduled Nov 14–17 (after Hard Stop 5)|
+| Facilitator view and results export | — | Facilitator overview of sessions; downloadable results | Scheduled Nov 14–17 (after Hard Stop 5) |
 
 ## Scoring and Report Flow
 
@@ -72,4 +73,4 @@ Deterministic, rule-based scoring. Correct = 2 points, partial = 1, incorrect = 
 
 ## Deployment
 
-Render free web service, auto-deployed from `main`, start command `gunicorn app:app --workers 1`, with Render Postgres (free tier, expires about 30 days after creation). Free services spin down after about 15 minutes idle; measured wake-up time is about 32 seconds (see `docs/evidence-index.md`).
+Render free web service, auto-deployed from `main`, start command `gunicorn ap p:app --workers 1`, with Render Postgres (free tier, expires about 30 days after creation). Free services spin down after about 15 minutes idle; measured wake-up time is about 32 seconds (see `docs/evidence-index.md`). Operating procedures (deploy, warm-up, clearing test data, recreating the database, releases) are in runbook.md.

@@ -82,3 +82,16 @@
 
 **Next:** sc02 and sc03 content and the mapping audit (Week 9), recruit three peer reviewers
 
+## Weeks 9–10 — Results memo and Hard Stop 5
+
+**Delayed:** ill for most of Oct 26 – Nov 8; Assignment 9 and Hard Stop 5 deadlines missed. The Nov 1 checkpoint fired; full scope kept with a revised schedule.
+
+**Completed (Nov 9):**
+- Initial Access and Impact scenarios with draft mappings; nine new NIST controls; 14 new known-answer cases; tests cover all three scenarios (v0.4.0)
+- Found four content files saved with " copy" in their names that every test still passed; renamed them and added a naming test
+- Hardening: friendly error pages, debugger off by default, session clean-up tool, benchmark for any scenario (v0.5.0)
+- README rewritten; `.env.example`, runbook, reproducibility pass and friction log
+
+**Next:** mapping audit; understanding rating with migrations; facilitator view and export; recreate the database; peer testing
+
+
