@@ -1,0 +1,101 @@
+run,step,status,seconds
+1,start + decision 1,200,0.7544
+1,submit decision 1,200,0.2184
+1,submit decision 2,200,0.2341
+1,submit decision 3 + score page,200,0.2476
+1,after-action report,200,0.1261
+2,start + decision 1,200,0.1834
+2,submit decision 1,200,0.1918
+2,submit decision 2,200,0.1788
+2,submit decision 3 + score page,200,0.1957
+2,after-action report,200,0.0863
+3,start + decision 1,200,0.218
+3,submit decision 1,200,0.1594
+3,submit decision 2,200,0.1943
+3,submit decision 3 + score page,200,0.1754
+3,after-action report,200,0.0911
+4,start + decision 1,200,0.1742
+4,submit decision 1,200,0.2326
+4,submit decision 2,200,0.1747
+4,submit decision 3 + score page,200,0.1754
+4,after-action report,200,0.0856
+5,start + decision 1,200,0.1578
+5,submit decision 1,200,0.174
+5,submit decision 2,200,0.2075
+5,submit decision 3 + score page,200,0.1767
+5,after-action report,200,0.0909
+6,start + decision 1,200,0.205
+6,submit decision 1,200,0.1574
+6,submit decision 2,200,0.1766
+6,submit decision 3 + score page,200,0.1861
+6,after-action report,200,0.0882
+7,start + decision 1,200,0.1718
+7,submit decision 1,200,0.1814
+7,submit decision 2,200,0.1801
+7,submit decision 3 + score page,200,0.1837
+7,after-action report,200,0.0782
+8,start + decision 1,200,0.1667
+8,submit decision 1,200,0.2018
+8,submit decision 2,200,0.1802
+8,submit decision 3 + score page,200,0.193
+8,after-action report,200,0.0934
+9,start + decision 1,200,0.1891
+9,submit decision 1,200,0.1419
+9,submit decision 2,200,0.1624
+9,submit decision 3 + score page,200,0.1528
+9,after-action report,200,0.0717
+10,start + decision 1,200,0.239
+10,submit decision 1,200,0.2029
+10,submit decision 2,200,0.1742
+10,submit decision 3 + score page,200,0.1491
+10,after-action report,200,0.0645
+11,start + decision 1,200,0.1696
+11,submit decision 1,200,0.1583
+11,submit decision 2,200,0.1677
+11,submit decision 3 + score page,200,0.1766
+11,after-action report,200,0.0938
+12,start + decision 1,200,0.1745
+12,submit decision 1,200,0.1711
+12,submit decision 2,200,1.1737
+12,submit decision 3 + score page,200,0.1453
+12,after-action report,200,0.075
+13,start + decision 1,200,0.1431
+13,submit decision 1,200,0.1453
+13,submit decision 2,200,0.1736
+13,submit decision 3 + score page,200,0.1599
+13,after-action report,200,0.0899
+14,start + decision 1,200,0.1506
+14,submit decision 1,200,0.1901
+14,submit decision 2,200,0.1891
+14,submit decision 3 + score page,200,0.1872
+14,after-action report,200,0.1726
+15,start + decision 1,200,0.1872
+15,submit decision 1,200,0.1371
+15,submit decision 2,200,0.1597
+15,submit decision 3 + score page,200,0.1333
+15,after-action report,200,0.0801
+16,start + decision 1,200,0.1486
+16,submit decision 1,200,0.2046
+16,submit decision 2,200,0.1714
+16,submit decision 3 + score page,200,0.1864
+16,after-action report,200,0.07
+17,start + decision 1,200,0.153
+17,submit decision 1,200,0.1581
+17,submit decision 2,200,0.171
+17,submit decision 3 + score page,200,0.19
+17,after-action report,200,0.0671
+18,start + decision 1,200,0.1596
+18,submit decision 1,200,0.1505
+18,submit decision 2,200,0.2261
+18,submit decision 3 + score page,200,0.1674
+18,after-action report,200,0.0899
+19,start + decision 1,200,0.146
+19,submit decision 1,200,0.2087
+19,submit decision 2,200,0.1703
+19,submit decision 3 + score page,200,0.1797
+19,after-action report,200,0.0737
+20,start + decision 1,200,0.3907
+20,submit decision 1,200,0.1891
+20,submit decision 2,200,0.1463
+20,submit decision 3 + score page,200,0.1561
+20,after-action report,200,0.0952

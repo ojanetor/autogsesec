@@ -9,7 +9,7 @@
 | Run | Date (UTC) | Environment | Commit / tag | Steps followed | Result | Record |
 |---|---|---|---|---|---|---|
 | 1. Pre-check | 2026-11-09 | Fresh `git clone` into an empty folder, new virtual environment, Python 3.11.18, Linux (run by the AI assistant in its own sandbox; see AI usage log) | HS5 working branch | README Option B: venv, `pip install -r requirements-dev.txt`, `python -m pytest -q`, `python app.py`, `/health` | 89 passed; `/health` ok with 3 scenarios | This table |
-| 2. Clean Codespace (student) | [fill] | **New** GitHub Codespace created from `main`, never used before; Python [fill from manifest] | [fill: commit] | README Quick start and Setup Option A, then "Reproduce the evidence" | [fill: tests passed, known answers matched] | `evidence/runs/v0.5.0-clean-codespace/` |
+| 2. Clean Codespace (student) | 2026-11-09 | New GitHub Codespace created from `main`, never used before; Python 3.11.18 | `beccefc` (main after the Hard Stop 5 merge) | README Quick start and Setup Option A: activate `.venv`, `python app.py` (library loaded), `python -m pytest -q`, then "Reproduce the evidence": `collect_evidence.py` and the live benchmark | 89 passed in 0.62 s; 21 of 21 known-answer cases match; live benchmark 20 of 20 score pages under 3 s (median 0.177 s); no undocumented steps | `evidence/runs/v0.5.0-clean-codespace/`, `evidence/benchmarks/render-warm-20261109T222224Z/` |
 
 ## Friction log
 
@@ -28,8 +28,9 @@
 | F11 | Evidence index described v0.3.0 only | Repository audit | Reviewer cannot find current evidence | Index rewritten for v0.5.0 | `docs/evidence-index.md` |
 | F12 | `python3.11` is not installed on many machines | Pre-check | Option B fails at the first command | Troubleshooting row; Codespaces recommended | README |
 | F13 | `scripts/inspect_db.py` reads local SQLite only | Pre-check | Confusing on Postgres | Documented in README | README |
-| F14 | [fill: anything that slowed you down in run 2, or "None found"] | Clean Codespace run | | | |
+| F14 | Server log shows `GET /favicon.ico 404` on the first page load | Clean Codespace run | Harmless, but looks like an error to a new user reading the log | Recorded; no site icon is defined. Cosmetic, left open | Server log |
+| F15 | First live request took 32.2 s (benchmark warm-up) | Clean Codespace run | A new user may think the live site is down | No change needed: already explained in README (Live site, Troubleshooting) and the runbook; third cold-start measurement, consistent with 32.4 s at v0.3.0 | README, runbook |
 
 ## Conclusion
 
-[fill after run 2: e.g. "Following only the README, a new Codespace reached 89 passing tests and 21 of 21 matching known-answer cases in about N minutes, with no undocumented steps."]
+Following only the README, a brand-new Codespace reached 89 passing tests, 21 of 21 matching known-answer cases, and a complete evidence record on its first attempt, and the live site met the 3-second requirement on 20 of 20 runs. No step depended on knowledge outside the documentation. The two friction points found (a cosmetic favicon 404 and the documented cold start) did not block setup. Thirteen earlier friction points (F1–F13) were fixed before this run.

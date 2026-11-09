@@ -58,7 +58,7 @@ python app.py                # then open the forwarded port 5000
 
 | Need | Version | Notes |
 |---|---|---|
-| Python | **3.11** (`.python-version`) | CI and Render use the newest 3.11 patch; evidence recorded on 3.11.16 and 3.11.17 |
+| Python | **3.11** (`.python-version`) | CI and Render use the newest 3.11 patch; evidence recorded on 3.11.16, 3.11.17, and 3.11.18 |
 | pip | any recent | comes with Python |
 | Git | any recent | to clone the repository |
 | Browser | any modern browser | cookies must be enabled (the exercise uses a session cookie) |

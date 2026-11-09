@@ -6,12 +6,13 @@ Every claim in the project reports maps to a file in `evidence/`. Times are UTC.
 
 | Criterion | Threshold | Evidence | Result |
 |---|---|---|---|
-| Clean-environment reproducibility: README followed from a brand-new Codespace | All tests pass; known answers match; no undocumented steps | `evidence/runs/v0.5.0-clean-codespace/`; `docs/reproducibility.md` | [fill after run] |
-| Scores and reports match hand-computed answers, all three scenarios (FR-04, FR-07, FR-08) | 21 of 21 | `evidence/runs/v0.5.0-clean-codespace/known_answers.md` | [fill] |
-| Every answer path scores consistently (FR-04) | 192 of 192 (64 per scenario) | `evidence/runs/v0.5.0-clean-codespace/tests.txt` | [fill] |
-| Same input gives identical score and report (NFR-06) | 10 of 10, each scenario | same `tests.txt` | [fill] |
-| Hardening: friendly error pages, debugger off by default, session clean-up, file-naming check | Tests pass | same `tests.txt` (`test_smoke.py`, `test_security.py`, `test_maintenance.py`) | [fill] |
-| Score page under 3 s, live and warm, after v0.5.0 deploy (NFR-01) | 20 of 20 | `evidence/benchmarks/render-warm-<UTC time>/` | [fill] |
+| Clean-environment reproducibility: README followed from a brand-new Codespace | All tests pass; known answers match; no undocumented steps | `evidence/runs/v0.5.0-clean-codespace/`; `docs/reproducibility.md` | PASS (Python 3.11.18, commit `beccefc`) |
+| Scores and reports match hand-computed answers, all three scenarios (FR-04, FR-07, FR-08) | 21 of 21 | `evidence/runs/v0.5.0-clean-codespace/known_answers.md` | PASS (21 of 21) |
+| Every answer path scores consistently (FR-04) | 192 of 192 (64 per scenario) | `evidence/runs/v0.5.0-clean-codespace/tests.txt` | PASS |
+| Same input gives identical score and report (NFR-06) | 10 of 10, each scenario | same `tests.txt` | PASS |
+| Hardening: friendly error pages, debugger off by default, session clean-up, file-naming check | Tests pass | same `tests.txt` (`test_smoke.py`, `test_security.py`, `test_maintenance.py`) | PASS (89 of 89 tests) |
+| Score page under 3 s, live and warm, after v0.5.0 deploy (NFR-01) | 20 of 20 | `evidence/benchmarks/render-warm-20261109T222224Z/` | PASS: 20 of 20; median 0.177 s, p95 0.196 s, max 0.248 s |
+| First request after idle (cold start), v0.5.0 | Reference | warm-up line of the same run (not counted in the 20) | 32.2 s, consistent with 32.4 s at v0.3.0 |
 
 ## v0.4.0 (three scenarios)
 
