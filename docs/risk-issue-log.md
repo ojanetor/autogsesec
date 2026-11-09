@@ -35,7 +35,7 @@ Last reviewed: 2026-11-09 (Hard Stop 5). Reviewed at the end of every sprint and
 | I-11 | Render Postgres not tested directly | Medium | Deployed, connected, and benchmarked | HS4 | Closed |
 | I-12 | Abandoned sessions accumulate | Low | `scripts/purge_sessions.py --abandoned-hours`; 8 tests; run before peer testing | HS5 | Mitigated |
 | I-13 | SQLite returns times without a zone marker | Low | All times written in UTC; Postgres stores the zone | — | Monitoring |
-| I-14 | Python patch versions differ (Codespace 3.11.16, Render and CI 3.11.17) | Low | Recorded in every evidence manifest | — | Monitoring |
+| I-14 | Python patch versions differ (old Codespace 3.11.16, CI and Render 3.11.17, new Codespace 3.11.18) | Low | Recorded in every evidence manifest; identical results on all three (v0.5.0 clean run) | — | Monitoring |
 | I-16 | One gunicorn worker only, because startup table creation could race | Low | Remove the limit once migrations exist | HS5 | Open |
 | I-17 | Benchmark runs leave test sessions in the production database | Low | `scripts/purge_sessions.py --started-before`; run on the live database before peer testing | HS5 | Mitigated |
 | I-18 | Render silently ran on a temporary SQLite file because `DATABASE_URL` was missing; sessions were lost on each spin-down | High | Found by checking `/health` on the live site; variable set; production now refuses to start without it; test added | HS4 | Closed |
