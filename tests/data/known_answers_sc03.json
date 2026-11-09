@@ -1,0 +1,61 @@
+{
+  "description": "Known-answer cases for sc03. Each expected value was worked out by hand from data/mappings/sc03_loss_of_view.json (2 points correct, 1 partial, 0 incorrect; Prepared >= 80%, Developing >= 50%; each control recommended once, at its earliest timeline).",
+  "scenario_id": "sc03",
+  "cases": [
+    {
+      "id": "K1",
+      "purpose": "Best answer at every decision",
+      "answers": {"dp1": "b", "dp2": "b", "dp3": "b"},
+      "expected": {"earned": 6, "percent": 100.0, "readiness": "Prepared",
+                   "gap_order": [], "recommended": {}}
+    },
+    {
+      "id": "K2",
+      "purpose": "Worst answers; every gap is immediate",
+      "answers": {"dp1": "a", "dp2": "c", "dp3": "a"},
+      "expected": {"earned": 0, "percent": 0.0, "readiness": "Unprepared",
+                   "gap_order": ["dp1", "dp2", "dp3"],
+                   "recommended": {"immediate": ["SI-4", "IR-4", "IR-6", "CP-10"]}}
+    },
+    {
+      "id": "K3",
+      "purpose": "All partial (50%); CP-10 is needed short-term and long-term but listed once, at short-term",
+      "answers": {"dp1": "d", "dp2": "a", "dp3": "c"},
+      "expected": {"earned": 3, "percent": 50.0, "readiness": "Developing",
+                   "gap_order": ["dp1", "dp2", "dp3"],
+                   "recommended": {"short_term": ["IR-4", "CP-10"]}}
+    },
+    {
+      "id": "K4",
+      "purpose": "One partial answer still reaches Prepared (83.3%)",
+      "answers": {"dp1": "b", "dp2": "b", "dp3": "c"},
+      "expected": {"earned": 5, "percent": 83.3, "readiness": "Prepared",
+                   "gap_order": ["dp3"],
+                   "recommended": {"long_term": ["CP-10"]}}
+    },
+    {
+      "id": "K5",
+      "purpose": "Low score (16.7%) with gaps across two timelines",
+      "answers": {"dp1": "c", "dp2": "a", "dp3": "d"},
+      "expected": {"earned": 1, "percent": 16.7, "readiness": "Unprepared",
+                   "gap_order": ["dp1", "dp2", "dp3"],
+                   "recommended": {"immediate": ["IR-4"], "short_term": ["CP-10", "CP-2"]}}
+    },
+    {
+      "id": "K6",
+      "purpose": "Later immediate gap is listed before an earlier short-term gap",
+      "answers": {"dp1": "d", "dp2": "d", "dp3": "b"},
+      "expected": {"earned": 3, "percent": 50.0, "readiness": "Developing",
+                   "gap_order": ["dp2", "dp1"],
+                   "recommended": {"immediate": ["IR-4"]}}
+    },
+    {
+      "id": "K7",
+      "purpose": "Decision 3 immediate gap comes first; repeated CP-10 listed once",
+      "answers": {"dp1": "b", "dp2": "a", "dp3": "a"},
+      "expected": {"earned": 3, "percent": 50.0, "readiness": "Developing",
+                   "gap_order": ["dp3", "dp2"],
+                   "recommended": {"immediate": ["CP-10"]}}
+    }
+  ]
+}

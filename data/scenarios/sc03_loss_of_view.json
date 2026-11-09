@@ -1,0 +1,42 @@
+{
+  "id": "sc03",
+  "title": "Dark Screens: Loss of View Across the Fleet",
+  "module": "Impact",
+  "status": "Draft v1 - pending mapping audit",
+  "summary": "The fleet monitoring view freezes while autonomous tractors are still moving near aircraft.",
+  "decision_points": [
+    {
+      "id": "dp1",
+      "context": "During a busy arrival bank, the fleet monitoring dashboard stops updating. Vehicle icons are frozen in place, but ramp staff can see tractors still moving near aircraft.",
+      "prompt": "What is your first action?",
+      "options": [
+        {"id": "a", "text": "Wait a few minutes for the dashboard to recover."},
+        {"id": "b", "text": "Trigger the fleet-wide safe stop and post staff to watch the vehicles directly."},
+        {"id": "c", "text": "Open an IT ticket and keep operating while IT investigates."},
+        {"id": "d", "text": "Stop only the vehicles closest to aircraft and let the rest continue."}
+      ]
+    },
+    {
+      "id": "dp2",
+      "context": "The vendor reports that the monitoring server restarted after a configuration change that nobody on the change calendar made.",
+      "prompt": "What do you do next?",
+      "options": [
+        {"id": "a", "text": "Restore the last good configuration and resume, without further investigation."},
+        {"id": "b", "text": "Preserve the logs, check the change records, report it as a possible incident, then restore a known-good configuration."},
+        {"id": "c", "text": "Wait for the vendor's written report before doing anything."},
+        {"id": "d", "text": "Wipe and rebuild the server right away."}
+      ]
+    },
+    {
+      "id": "dp3",
+      "context": "Monitoring is back and the cause is still being investigated. Operations wants to return to full autonomous operations.",
+      "prompt": "How do you return to operations?",
+      "options": [
+        {"id": "a", "text": "Resume normally now that the dashboard works."},
+        {"id": "b", "text": "Resume in supervised mode, test the manual fallback procedure, and update and exercise the contingency plan."},
+        {"id": "c", "text": "Keep the fleet grounded until a full vendor audit is complete."},
+        {"id": "d", "text": "Add a second monitoring screen and resume normally."}
+      ]
+    }
+  ]
+}

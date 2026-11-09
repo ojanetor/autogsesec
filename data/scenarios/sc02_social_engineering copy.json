@@ -1,0 +1,42 @@
+{
+  "id": "sc02",
+  "title": "The Helpful Caller: Social Engineering at the Fleet Console",
+  "module": "Initial Access",
+  "status": "Draft v1 - pending mapping audit",
+  "summary": "A caller posing as vendor support, and a former contractor's account that was never closed, open a way into the fleet management system.",
+  "decision_points": [
+    {
+      "id": "dp1",
+      "context": "Shortly before the morning departure bank, the shift lead gets a call from someone who says they are from the vehicle vendor's support team. They say a critical update must go out before the bank and ask the shift lead to turn on remote access to the fleet console and read back the one-time access code.",
+      "prompt": "What do you do?",
+      "options": [
+        {"id": "a", "text": "Turn on remote access and read the code, since the update sounds urgent."},
+        {"id": "b", "text": "Refuse, hang up, and carry on with the shift."},
+        {"id": "c", "text": "Refuse, call the vendor back on the number in the support contract, and report the call to security."},
+        {"id": "d", "text": "Turn on remote access but watch the session closely."}
+      ]
+    },
+    {
+      "id": "dp2",
+      "context": "Security reviews fleet console sign-ins after the call. They find that the account of a maintenance contractor whose contract ended three weeks ago signed in late last night.",
+      "prompt": "How do you handle the account?",
+      "options": [
+        {"id": "a", "text": "Disable the account now, preserve the sign-in records, and review what it accessed."},
+        {"id": "b", "text": "Disable the account and move on."},
+        {"id": "c", "text": "Leave the account active and email the contractor's former manager to ask about it."},
+        {"id": "d", "text": "Reset the password but keep the account in case the contractor comes back."}
+      ]
+    },
+    {
+      "id": "dp3",
+      "context": "The review shows no changes were made to the vehicles, but the account could see fleet routes and schedules. Leadership asks what should change.",
+      "prompt": "What do you recommend?",
+      "options": [
+        {"id": "a", "text": "Send a reminder email about phishing to all staff."},
+        {"id": "b", "text": "Role-based social-engineering training for ramp and operations staff, least-privilege console roles, and an offboarding step that closes accounts when contracts end."},
+        {"id": "c", "text": "Ban all vendor remote access permanently."},
+        {"id": "d", "text": "No change, since nothing was damaged."}
+      ]
+    }
+  ]
+}

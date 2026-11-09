@@ -1,0 +1,29 @@
+{
+  "scenario_id": "sc02",
+  "mapping_status": "DRAFT - verify every entry against NIST SP 800-82 Rev. 3 (NFR-07)",
+  "framework_versions": {
+    "attack_ics": "v19.2",
+    "nist_sp800_82": "Rev. 3"
+  },
+  "attack_tactic": "TA0108",
+  "decision_points": {
+    "dp1": {
+      "a": {"rating": "incorrect", "nist_controls": ["AT-2", "AC-17"], "timeline": "immediate", "rationale": "Urgency and authority are classic social-engineering pressure; remote access went to an unverified caller."},
+      "b": {"rating": "partial", "nist_controls": ["AT-2"], "timeline": "short_term", "rationale": "Refusing stops the attempt, but security never hears about it, so other staff stay exposed."},
+      "c": {"rating": "correct", "nist_controls": ["AT-2", "IR-6"], "timeline": null, "rationale": "Verifies the request through a known channel and reports the attempt so others can be warned."},
+      "d": {"rating": "incorrect", "nist_controls": ["AC-17"], "timeline": "immediate", "rationale": "Watching the session does not stop an unverified party from acting on the fleet."}
+    },
+    "dp2": {
+      "a": {"rating": "correct", "nist_controls": ["PS-4", "AC-2", "AU-6"], "timeline": null, "rationale": "Closes access at once, keeps the evidence, and finds out what the account did."},
+      "b": {"rating": "partial", "nist_controls": ["PS-4"], "timeline": "short_term", "rationale": "Closes the door but leaves the question of what happened unanswered."},
+      "c": {"rating": "incorrect", "nist_controls": ["PS-4"], "timeline": "immediate", "rationale": "The account of someone who has left must be closed at once, not after an email."},
+      "d": {"rating": "incorrect", "nist_controls": ["AC-2"], "timeline": "immediate", "rationale": "Accounts of people who have left should be removed, not kept in reserve."}
+    },
+    "dp3": {
+      "a": {"rating": "partial", "nist_controls": ["AT-2"], "timeline": "short_term", "rationale": "Awareness helps, but one email does not build skills or close the account gap."},
+      "b": {"rating": "correct", "nist_controls": ["AT-3", "AC-6", "PS-4"], "timeline": null, "rationale": "Fixes the human, access, and process causes together."},
+      "c": {"rating": "partial", "nist_controls": ["AC-17"], "timeline": "long_term", "rationale": "Removes the risk but also legitimate support; controlled remote access is the proportionate fix."},
+      "d": {"rating": "incorrect", "nist_controls": ["AT-2", "AC-6"], "timeline": "short_term", "rationale": "Two failures happened; no damage this time was luck, not control."}
+    }
+  }
+}
