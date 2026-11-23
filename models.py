@@ -29,6 +29,7 @@ class ExerciseSession(db.Model):
     completed_at = db.Column(db.DateTime(timezone=True))
     pre_understanding = db.Column(db.Integer)
     post_understanding = db.Column(db.Integer)
+    usefulness = db.Column(db.Integer)  # 1-5, "this exercise improved my understanding" (NFR-05)
 
     responses = db.relationship(
         "Response", back_populates="session",

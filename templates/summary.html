@@ -18,6 +18,30 @@
     <p class="meta">Mapped NIST controls: {{ row.controls | join(", ") }}</p>
   </section>
 {% endfor %}
+{% if exercise.usefulness is none %}
+<section class="card">
+  <h2>Two quick questions</h2>
+  <form method="post" action="{{ url_for('feedback', scenario_id=scenario.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <fieldset class="rating-question">
+      <legend>Now, how well do you understand this kind of threat?</legend>
+      {% for value in range(1, 6) %}
+        <label class="scale"><input type="radio" name="post_understanding" value="{{ value }}" required> {{ value }}</label>
+      {% endfor %}
+    </fieldset>
+    <fieldset class="rating-question">
+      <legend>"This exercise improved my understanding of the threat."</legend>
+      {% for value in range(1, 6) %}
+        <label class="scale"><input type="radio" name="usefulness" value="{{ value }}" required> {{ value }}</label>
+      {% endfor %}
+    </fieldset>
+    <p class="meta">1 = not at all / strongly disagree, 5 = very well / strongly agree. Anonymous.</p>
+    <button class="button secondary" type="submit">Save answers</button>
+  </form>
+</section>
+{% else %}
+<p class="meta">Thank you. Your answers were saved.</p>
+{% endif %}
 <a class="button" href="{{ url_for('report', scenario_id=scenario.id) }}">View after-action report</a>
 <a class="button secondary" href="{{ url_for('home') }}">Back to scenario library</a>
 {% endblock %}

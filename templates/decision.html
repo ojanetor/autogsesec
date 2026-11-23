@@ -7,6 +7,15 @@
   {% if error %}<p class="error">{{ error }}</p>{% endif %}
   <form method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% if number == 1 %}
+    <fieldset class="rating-question">
+      <legend>Before you start: how well do you understand this kind of threat?</legend>
+      {% for value in range(1, 6) %}
+        <label class="scale"><input type="radio" name="pre_understanding" value="{{ value }}" required> {{ value }}</label>
+      {% endfor %}
+      <p class="meta">1 = not at all, 5 = very well. Anonymous; used only to evaluate this tool.</p>
+    </fieldset>
+    {% endif %}
     {% for option in point.options %}
       <label class="option">
         <input type="radio" name="option_id" value="{{ option.id }}" required>

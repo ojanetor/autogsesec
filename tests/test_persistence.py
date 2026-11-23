@@ -51,7 +51,7 @@ def test_abandoned_session_has_no_completion_time():
 def test_schema_has_no_personal_data_columns():
     expected_sessions = {
         "session_id", "scenario_id", "content_version", "started_at",
-        "completed_at", "pre_understanding", "post_understanding",
+        "completed_at", "pre_understanding", "post_understanding", "usefulness",
     }
     expected_responses = {
         "response_id", "session_id", "decision_point_id", "option_id", "submitted_at",
@@ -62,19 +62,6 @@ def test_schema_has_no_personal_data_columns():
             for table in db.metadata.sorted_tables
         }
     assert columns == {"sessions": expected_sessions, "responses": expected_responses}
-
-def test_timestamps_record_the_correct_moment():
-    """A stored time must equal the real UTC moment, whatever the database's time zone."""
-    before = utc_now()
-    client = app.test_client()
-    walk_through(client, ["d"])
-    after = utc_now()
-    with app.app_context():
-        started = ExerciseSession.query.one().started_at
-    if started.tzinfo is None:
-        started = started.replace(tzinfo=timezone.utc)
-    assert before <= started <= after
-
 
 def test_timestamps_record_the_correct_moment():
     """A stored time must equal the real UTC moment, whatever the database's time zone."""
