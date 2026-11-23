@@ -42,4 +42,13 @@ jobs:
         with:
           python-version-file: .python-version
       - run: pip install -r requirements-dev.txt
+      - name: Build the schema with migrations, as production does, and check it matches the models
+        env:
+          APP_ENV: production
+          SECRET_KEY: ci-only
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+        run: |
+          flask --app app db upgrade
+          flask --app app db check
       - run: python -m pytest -v
+      

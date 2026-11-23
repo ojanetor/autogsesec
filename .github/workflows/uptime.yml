@@ -1,0 +1,25 @@
+name: uptime
+
+# Availability check for the peer-testing window (NFR-02: at least 95%).
+# Every run requests /health on the live site. A green run means the site
+# answered with HTTP 200 within 90 seconds (enough for a cold start); a red
+# run means it did not. The list of runs on the Actions tab is the uptime log.
+# GitHub may delay or skip scheduled runs when busy, so the run count is
+# reported along with the percentage.
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request /health
+        run: |
+          code=$(curl -s -o body.json -w "%{http_code}" --max-time 90 https://autogsesec.onrender.com/health || echo 000)
+          echo "HTTP $code"
+          cat body.json 2>/dev/null || true
+          test "$code" = "200"
+          

@@ -2,12 +2,13 @@ import os
 import sys
 from importlib.metadata import version
 
-from flask import Flask, abort, jsonify, redirect, render_template, request, session, url_for
+from flask import Flask, Response as HttpResponse, abort, jsonify, redirect, render_template, request, session, url_for
+from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFError, CSRFProtect
 
 from config import database_url, is_production, secret_key
 from engine.content import load_all, load_control_names
-from engine.report import build_report
+from engine.report import build_report, report_as_text
 from engine.scoring import ScoringError, score_session
 from models import ExerciseSession, Response, db, utc_now
 
@@ -20,8 +21,13 @@ app.config["SESSION_COOKIE_SECURE"] = is_production()
 
 csrf = CSRFProtect(app)
 db.init_app(app)
-with app.app_context():
-    db.create_all()
+migrate = Migrate(app, db)
+
+# Production builds its schema with migrations (`flask --app app db upgrade`,
+# run by the Render start command). Development and tests create it directly.
+if not is_production():
+    with app.app_context():
+        db.create_all()
 
 SCENARIOS = load_all()
 CONTROL_NAMES = load_control_names()
@@ -39,15 +45,32 @@ def content_version_tag(scenario):
     return f"ATT&CK for ICS {versions['attack_ics']}; NIST SP 800-82 {versions['nist_sp800_82']}"
 
 
+RATING_SCALE = range(1, 6)  # 1 = very low, 5 = very high
+
+
 def current_exercise(scenario_id):
-    """Return this browser's exercise session for the scenario, or None."""
-    exercise_id = session.get("exercise_id")
+    """Return this browser's exercise session for the scenario, or None.
+
+    The browser cookie keeps one exercise per scenario, so finishing one
+    scenario and starting another does not lose the first report.
+    """
+    exercise_id = session.get("exercises", {}).get(scenario_id)
     if exercise_id is None:
         return None
     exercise = db.session.get(ExerciseSession, exercise_id)
     if exercise is None or exercise.scenario_id != scenario_id:
         return None
     return exercise
+
+
+def parse_rating(value):
+    """Return an int 1-5 from a form value, None if blank; raise ValueError otherwise."""
+    if value is None or value == "":
+        return None
+    rating = int(value)
+    if rating not in RATING_SCALE:
+        raise ValueError("rating out of range")
+    return rating
 
 
 def complete_answers(scenario, exercise):
@@ -93,7 +116,9 @@ def start(scenario_id):
     exercise = ExerciseSession(scenario_id=scenario_id, content_version=content_version_tag(scenario))
     db.session.add(exercise)
     db.session.commit()
-    session["exercise_id"] = exercise.session_id
+    exercises = dict(session.get("exercises", {}))
+    exercises[scenario_id] = exercise.session_id
+    session["exercises"] = exercises
     return redirect(url_for("decision", scenario_id=scenario_id, number=1))
 
 
@@ -107,17 +132,27 @@ def decision(scenario_id, number):
     if exercise is None:
         return redirect(url_for("start", scenario_id=scenario_id))
 
+    if exercise.completed_at is not None:
+        # Answers are locked once the exercise is scored.
+        return redirect(url_for("summary", scenario_id=scenario_id))
+
     point = points[number - 1]
 
     if request.method == "POST":
         choice = request.form.get("option_id", "")
         allowed = {option["id"] for option in point["options"]}
+        try:
+            pre_rating = parse_rating(request.form.get("pre_understanding")) if number == 1 else None
+        except ValueError:
+            choice = None
         if choice not in allowed:
             return render_template(
                 "decision.html", scenario=scenario, point=point,
                 number=number, total=len(points),
                 error="Please choose one of the listed options.",
             ), 400
+        if pre_rating is not None:
+            exercise.pre_understanding = pre_rating
 
         existing = Response.query.filter_by(
             session_id=exercise.session_id, decision_point_id=point["id"]
@@ -135,6 +170,7 @@ def decision(scenario_id, number):
 
         if number < len(points):
             return redirect(url_for("decision", scenario_id=scenario_id, number=number + 1))
+        mark_complete(exercise)
         return redirect(url_for("summary", scenario_id=scenario_id))
 
     return render_template(
@@ -171,19 +207,39 @@ def summary(scenario_id):
     except ScoringError:
         app.logger.exception("Scoring failed for session %s", exercise.session_id)
         return render_template("error.html"), 500
-    return render_template("summary.html", scenario=scenario, rows=rows, score=score)
+    return render_template("summary.html", scenario=scenario, rows=rows, score=score,
+                           exercise=exercise, error=None)
 
 
-@app.route("/scenario/<scenario_id>/report")
-def report(scenario_id):
-    """After-action report (FR-06 to FR-08), regenerated from stored responses."""
+@app.route("/scenario/<scenario_id>/feedback", methods=["POST"])
+def feedback(scenario_id):
+    """Post-exercise questions (FR-10, NFR-05): understanding after, and usefulness."""
+    scenario = get_scenario_or_404(scenario_id)
+    exercise = current_exercise(scenario_id)
+    if exercise is None or exercise.completed_at is None:
+        return redirect(url_for("start", scenario_id=scenario_id))
+    try:
+        post_rating = parse_rating(request.form.get("post_understanding"))
+        usefulness = parse_rating(request.form.get("usefulness"))
+    except ValueError:
+        post_rating = usefulness = None
+    if post_rating is None or usefulness is None:
+        abort(400)
+    exercise.post_understanding = post_rating
+    exercise.usefulness = usefulness
+    db.session.commit()
+    return redirect(url_for("summary", scenario_id=scenario["id"]))
+
+
+def finished_report(scenario_id):
+    """Return (scenario, exercise, report) for a finished exercise, or a response to send instead."""
     scenario = get_scenario_or_404(scenario_id)
     exercise = current_exercise(scenario_id)
     if exercise is None:
-        return redirect(url_for("start", scenario_id=scenario_id))
+        return None, redirect(url_for("start", scenario_id=scenario_id))
     answers = complete_answers(scenario, exercise)
     if answers is None:
-        return redirect(url_for("start", scenario_id=scenario_id))
+        return None, redirect(url_for("start", scenario_id=scenario_id))
 
     mark_complete(exercise)
     try:
@@ -192,8 +248,34 @@ def report(scenario_id):
     except ScoringError:
         # UC-01 exception path: responses stay saved; nothing is scored incorrectly.
         app.logger.exception("Report failed for session %s", exercise.session_id)
-        return render_template("error.html"), 500
+        return None, (render_template("error.html"), 500)
+    return (scenario, exercise, aar), None
+
+
+@app.route("/scenario/<scenario_id>/report")
+def report(scenario_id):
+    """After-action report (FR-06 to FR-08), regenerated from stored responses."""
+    found, other = finished_report(scenario_id)
+    if other is not None:
+        return other
+    scenario, exercise, aar = found
     return render_template("report.html", scenario=scenario, report=aar, exercise=exercise)
+
+
+@app.route("/scenario/<scenario_id>/report.txt")
+def report_download(scenario_id):
+    """The same report as a plain-text file the participant can keep (FR-12)."""
+    found, other = finished_report(scenario_id)
+    if other is not None:
+        return other
+    scenario, exercise, aar = found
+    short_id = exercise.session_id[:8]
+    return HttpResponse(
+        report_as_text(aar, short_id),
+        mimetype="text/plain",
+        headers={"Content-Disposition":
+                 f'attachment; filename="autogsesec-{scenario["id"]}-report-{short_id}.txt"'},
+    )
 
 
 @app.errorhandler(404)

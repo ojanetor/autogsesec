@@ -78,4 +78,8 @@ body {
 .controls { margin: 0.5rem 0 0; padding-left: 1.2rem; }
 .controls li { margin: 0.4rem 0; }
 h3 { margin: 0.25rem 0 0.5rem; }
+.rating-question { border: 1px solid var(--accent); border-radius: 8px; padding: 0.75rem 1rem; margin: 0 0 1rem; }
+.rating-question legend { padding: 0 0.4rem; }
+.scale { display: inline-block; margin-right: 1rem; cursor: pointer; }
+
 
