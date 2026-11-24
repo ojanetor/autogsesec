@@ -48,7 +48,7 @@ In a GitHub Codespace (nothing to install):
 
 ```bash
 source .venv/bin/activate
-python -m pytest -q          # expect: 89 passed
+python -m pytest -q          # expect: 106 passed
 python app.py                # then open the forwarded port 5000
 ```
 
@@ -113,7 +113,7 @@ Open http://127.0.0.1:5000 (in Codespaces, open the forwarded port 5000). You sh
 - See what was stored: `python scripts/inspect_db.py` (local SQLite only).
 - The Flask debugger is off. Turn it on only on your own machine with `FLASK_DEBUG=1 python app.py`.
 
-Production uses gunicorn instead: `gunicorn app:app --workers 1` (see [docs/runbook.md](docs/runbook.md)).
+Production first applies the database migrations, then starts gunicorn: `flask --app app db upgrade && gunicorn app:app --workers 1` (see [docs/runbook.md](docs/runbook.md)).
 
 ---
 
@@ -123,7 +123,7 @@ Production uses gunicorn instead: `gunicorn app:app --workers 1` (see [docs/runb
 python -m pytest -q
 ```
 
-**Expected:** `89 passed` in about 1–3 seconds. The tests cover:
+**Expected:** `106 passed` in about 5 seconds. The tests cover:
 
 - **scoring correctness:** 21 hand-computed known-answer cases, 7 per scenario;
 - **every possible answer path:** 192 (64 per scenario);
@@ -142,7 +142,7 @@ Every claim in the project reports maps to a file in `evidence/`, listed in [doc
 
 | What | Command | Output | Expected |
 |---|---|---|---|
-| Tests, known answers, score distributions, environment manifest | `python scripts/collect_evidence.py --label my-run` | `evidence/runs/my-run/` | `tests.txt` shows 89 passed; `known_answers.md` shows 21 of 21 match |
+| Tests, known answers, score distributions, environment manifest | `python scripts/collect_evidence.py --label my-run` | `evidence/runs/my-run/` | `tests.txt` shows 106 passed; `known_answers.md` shows 21 of 21 match |
 | Score distribution for all 192 answer paths | `python scripts/score_distribution.py` | printed | Prepared on 6.2%, 7.8%, 6.2% of paths for sc01, sc02, sc03 |
 | Response time, local | Start `python app.py`, then in a second terminal: `python scripts/benchmark.py --base-url http://127.0.0.1:5000 --runs 20 --label local` | `evidence/benchmarks/local-<UTC time>/` | 20 of 20 score pages under 3 s |
 | Response time, live | `python scripts/benchmark.py --base-url https://autogsesec.onrender.com --runs 20 --label render-warm` | `evidence/benchmarks/render-warm-<UTC time>/` | 20 of 20 under 3 s once warm |
@@ -247,19 +247,21 @@ autogsesec/
 
 ## Project status and known limitations
 
-**v0.5.0 (Hard Stop 5).**
+**v0.6.0 (Hard Stop 6).**
 
 **Done:**
 - three scenarios end to end, with deterministic scoring and after-action reports;
-- 89 tests on SQLite and Postgres;
-- live deployment on Render Postgres;
-- clean-environment reproducibility pass ([docs/reproducibility.md](docs/reproducibility.md)).
+- 106 tests on SQLite and Postgres, including a migration check;
+- live deployment on Render Postgres, with the schema created by migrations;
+- before-and-after understanding and usefulness ratings, and report download;
+- clean-environment reproducibility pass (v0.5.0, [docs/reproducibility.md](docs/reproducibility.md)).
 
-**Not yet:**
-- the rubric mapping audit is in progress, so the mappings are drafts;
-- peer usability testing;
-- the before-and-after understanding rating, facilitator view, and report download;
-- schema migrations.
+**In progress (results after November 28):**
+- peer testing with four reviewers;
+- independent review of all 36 rubric entries;
+- uptime monitoring (GitHub Actions "uptime" workflow).
+
+**Descoped:** the facilitator view (its rationale already appears in every report).
 
 **Known limitations:**
 - the live first page takes about 30 seconds after idle;

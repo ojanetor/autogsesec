@@ -23,6 +23,49 @@ end of every work session that used AI.
 
 ---
 
+## Hard Stop 6 (November 17–23, 2026)
+
+Citation: Anthropic. (2026). *Claude* (November 23 version) [Large language model]. https://claude.ai
+
+### Task log
+
+| Date | Task | What the AI did | What was done and decided | How it was verified | Outcome |
+|---|---|---|---|---|---|
+| Nov 2026 | Peer-testing features | Wrote migrations, ratings, report download, per-scenario sessions, answer lock, uptime check, results export, and 17 tests | Chose to build migrations before testing; pasted, ran, and merged each change | 106 tests locally and in CI (both databases, including a migration check) | Accepted; pull request #19 |
+| Nov 2026 | Render database recreation | Gave step-by-step instructions | Recreated the database; fixed my own setting error (start command entered as the build command) | Deploy log; `/health` shows Postgres; full exercise run on the live site | Accepted |
+| Nov 2026 | Peer-testing guide and rubric review | Drafted the guide and the review tables from the mapping files | Chose four testers; split the rubric review across three reviewers so all 36 entries are covered | Tables generated from the mapping files, not retyped | Accepted with my changes; pull request #20 |
+| Nov 2026 | v0.6.0 evidence run | Gave the commands | Ran the tests, the evidence script, and the live benchmark | 106 passed; 21 of 21 cases; 20 of 20 score pages under 3 s (median 0.140 s) | Accepted |
+| Nov 2026 | Report revision | Revised the report against feedback| Edited, set wording, chose what to keep and cut; created the figures | Every number checked against `evidence/runs/v0.6.0/` and the benchmark; figure steps checked against Section 4.1 | Accepted with changes |
+| Nov 23 | Defect log and documentation updates | Drafted the defect log and the v0.6.0 updates from the risk log and evidence | Reviewed and committed | Numbers match `evidence/runs/v0.6.0/` | Accepted |
+
+### AI suggestions I rejected or corrected
+
+| AI suggestion or output | What I did | Why |
+|---|---|---|
+| Rubric review by one tester covering 12 of 36 entries | Changed to three reviewers covering all 36 | Stronger independent evidence |
+| Cut the facilitator view | Accepted, with the reason recorded (its rationale already appears in every report) | Scope decision is mine |
+
+### Process slips
+
+| What happened | How it was caught | Status |
+|---|---|---|
+| Start command pasted into the Render build-command field | Deploy failed with `flask: command not found` | Fixed; deploy succeeded |
+| The GPS scenario is mapped to Command and Control, whose techniques do not describe positioning spoofing (AI-assisted mapping from Hard Stop 2) | Found while building the threat-mapping table | Kept as a stated limitation (my decision); Manipulation of View (T0832) noted as the closest alternative |
+
+### Critical review of AI use (Hard Stops 5 and 6)
+
+**Where the AI was reliable:** drafting code from rules I set, diagnosing errors from output I supplied, and checking the repository for stale or inconsistent documents.
+
+**Where it was wrong or risky:** it miscounted twice, named the wrong NIST control once, drafted README statements nobody had measured, and drew a figure that contradicted the text. Its tests passed while four files had wrong names. An AI-assisted framework mapping from Hard Stop 2 is the weakest link in the rubric. Counts, control names, figures, and mappings are now checked against the files and the published catalogs.
+
+**Expected results versus independent verification:** the AI prepared the expected values for 14 of the 21 known-answer cases. I recomputed two by hand, and both matched. The agreement shows the engine is consistent with those values; it is weaker evidence of independence. Independent evidence comes from the peer reviewers' review of all 36 rubric entries.
+
+**Limits:** most code was AI-drafted from my rules. I can explain what each module does and why, but I did not write each line from scratch.
+
+**Not delegated:** requirements, scoring rules, thresholds, scope, scenario direction and approval, tester selection, and the interpretation of results.
+
+---
+
 ## Hard Stop 5 (November 9–10, 2026)
 
 Citation: Anthropic. (2026). *Claude* (November 10 version) [Large language model]. https://claude.ai
@@ -33,7 +76,7 @@ Citation: Anthropic. (2026). *Claude* (November 10 version) [Large language mode
 |---|---|---|---|---|---|
 | Nov 2026 | Initial Access and Impact scenarios | Drafted scenario text, options, ratings, controls, and rationales from my direction | Set the direction for each scenario; reviewed the drafts against my operator experience; approved them; confirmed no employer-specific content | Startup validator accepted both; tests pass | Accepted; v0.4.0. Mappings stay labeled draft until the final audit |
 | Nov 2026 | Tests and known answers for three scenarios | Edited the tests and evidence script to cover every scenario; computed 14 new known-answer cases | Reviewed, tested, and ran every file; rechecked a sample of the cases manually | 77, then 78 tests passing; both CI jobs green | Accepted |
-| Nov 2026 | Hardening code | Suggested friendly error pages, the debugger-off default, the session clean-up tool, benchmark options, and 11 tests | Reviewed, pasted, ran, and merged each change | 89 tests passing locally, in CI, and in the clean Codespace | Accepted |
+| Nov 2026 | Hardening code | friendly error pages, the debugger-off default, the session clean-up tool, benchmark options, and 11 tests | Reviewed, pasted, ran, and merged each change | 89 tests passing locally, in CI, and in the clean Codespace | Accepted |
 | Nov 2026 | README, runbook, environment template, reproducibility log | Drafted all four from an audit of the repository | Reviewed and merged; followed the README step by step in a new Codespace to ensure the setup instructions work | Clean-Codespace run reached 89 passed with no undocumented steps | Accepted |
 | Nov 2026 | Schema migrations | Recommended moving migrations from Hard Stop 5 to the first schema change | Accepted the move; target Nov 14–17 | Recorded in the risk and issue log | Deferred, not cut |
 | Nov 2026 | Hard Stop 5 package | Edited the package from the repo evidence and checked it against the requirements | Included edits, fixed spelling, and reformatted the diagrams | Compared evidence with file contents and test output | Accepted with changes |

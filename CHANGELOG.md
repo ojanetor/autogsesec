@@ -5,6 +5,28 @@ Format based on Keep a Changelog; versions follow `vMAJOR.MINOR.PATCH` (see docs
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-23
+
+Hard Stop 6: peer-testing release.
+
+### Added
+- Schema migrations (Flask-Migrate); `migrations/versions/0001_initial_schema.py`; CI checks that migrations build exactly the code's schema
+- Optional understanding rating before decision 1; understanding and usefulness ratings after the summary (FR-10)
+- Report download as a text file (FR-12)
+- One exercise per scenario per browser; answers lock once scored
+- `.github/workflows/uptime.yml`: checks `/health` every 30 minutes (availability record, NFR-02)
+- `scripts/export_results.py`: anonymous peer-testing results to `evidence/peer-testing/`
+- `docs/peer-testing-guide.md` and `docs/defect-log.md`
+- 17 new tests (106 in total)
+
+### Changed
+- Production schema is created by `flask --app app db upgrade` in the Render start command; development and tests still create tables at startup
+- Render Postgres recreated on November 23 after the first free database expired
+- README, evidence index, and risk log updated for v0.6.0
+
+### Removed
+- Facilitator view (FR-11) descoped: its rationale already appears in every report, and it would add an answer key to a public site
+
 ## [0.5.0] - 2026-11-09
 
 Hard Stop 5: hardening and reproducibility release.

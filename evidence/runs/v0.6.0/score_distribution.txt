@@ -1,0 +1,45 @@
+sc01: Drifting Positions: GPS Spoofing on the Ramp
+  answer combinations scored: 64
+  score distribution:
+      0.0%    8  ########
+     16.7%   12  ############
+     33.3%   18  ##################
+     50.0%   13  #############
+     66.7%    9  #########
+     83.3%    3  ###
+    100.0%    1  #
+  readiness bands:
+    Prepared      4  (6.2%)
+    Developing   22  (34.4%)
+    Unprepared   38  (59.4%)
+
+sc02: The Helpful Caller: Social Engineering at the Fleet Console
+  answer combinations scored: 64
+  score distribution:
+      0.0%    4  ####
+     16.7%   12  ############
+     33.3%   17  #################
+     50.0%   16  ################
+     66.7%   10  ##########
+     83.3%    4  ####
+    100.0%    1  #
+  readiness bands:
+    Prepared      5  (7.8%)
+    Developing   26  (40.6%)
+    Unprepared   33  (51.6%)
+
+sc03: Dark Screens: Loss of View Across the Fleet
+  answer combinations scored: 64
+  score distribution:
+      0.0%    8  ########
+     16.7%   12  ############
+     33.3%   18  ##################
+     50.0%   13  #############
+     66.7%    9  #########
+     83.3%    3  ###
+    100.0%    1  #
+  readiness bands:
+    Prepared      4  (6.2%)
+    Developing   22  (34.4%)
+    Unprepared   38  (59.4%)
+

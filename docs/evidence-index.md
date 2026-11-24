@@ -1,8 +1,20 @@
-# Evidence Index — AutoGSESec v0.5.0
+# Evidence Index — AutoGSESec v0.6.0
 
 Every claim in the project reports maps to a file in `evidence/`. Times are UTC. Each run folder has a `manifest.json` with the exact commit, Python version, and package list.
 
-## Current release (v0.5.0, Hard Stop 5)
+## Current release (v0.6.0, Hard Stop 6)
+
+| Criterion | Threshold | Evidence | Result |
+|---|---|---|---|
+| All automated tests | All pass | `evidence/runs/v0.6.0/tests.txt` | PASS: 106 of 106 |
+| Scores and reports match prepared answers, all three scenarios (FR-04, FR-07, FR-08) | 21 of 21 | `evidence/runs/v0.6.0/known_answers.md` | PASS: 21 of 21 |
+| Every answer path scores consistently (FR-04) | 192 of 192 | `evidence/runs/v0.6.0/tests.txt` | PASS |
+| Score page under 3 s, live and warm (NFR-01) | 20 of 20 | `evidence/benchmarks/render-warm-20261123T220651Z/` | PASS: 20 of 20; median 0.140 s, p95 0.169 s, max 0.302 s |
+| After-action report, live and warm | Reference | same folder | Median 0.061 s, p95 0.083 s, max 0.106 s |
+| Migrations build exactly the code's schema | No differences | `tests/test_migrations.py`; CI Postgres job | PASS |
+| Ratings and report download (FR-10, FR-12) | Built and tested | `tests/test_peer_testing.py` | PASS (feature); rating data pending |
+
+## v0.5.0 (Hard Stop 5)
 
 | Criterion | Threshold | Evidence | Result |
 |---|---|---|---|
@@ -38,5 +50,6 @@ Every claim in the project reports maps to a file in `evidence/`. Times are UTC.
 
 | Criterion | Threshold | Status |
 |---|---|---|
-| Rubric validity (NFR-07) | All 36 entries cite a verifiable control; 30% or more independently checked | Audit in progress |
-| Usability, usefulness, availability (NFR-02, NFR-03, NFR-05) | 80% unassisted completion; usefulness 4.0/5 or more; 95% uptime | Peer testing scheduled after the remaining features |
+| Rubric validity (NFR-07) | All 36 entries cite a verifiable control; 30% or more independently checked | Review of all 36 entries by three reviewers in progress; author audit after November 28 |
+| Usability, usefulness, availability (NFR-02, NFR-03, NFR-05) | 80% unassisted completion; usefulness 4.0/5 or more; 95% uptime | Peer testing November 23–28; uptime workflow running |
+| Defects (NFR-04) | 0 critical, at most 3 minor open | `docs/defect-log.md`: 0 open at v0.6.0; assessed after testing |
